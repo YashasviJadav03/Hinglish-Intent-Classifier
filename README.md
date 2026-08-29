@@ -144,7 +144,7 @@ curl -X GET https://hinglish-intent-classifier.onrender.com/health
 }
 ```
 
-### Inference Request
+#### Inference Request (Single Utterance)
 
 ```bash
 curl -X POST https://hinglish-intent-classifier.onrender.com/classify \
@@ -165,6 +165,40 @@ curl -X POST https://hinglish-intent-classifier.onrender.com/classify \
     "not_interested": 0.0,
     "positive_confirmation": 0.0002
   }
+}
+```
+
+### Batch Inference Request
+
+```bash
+curl -X POST https://hinglish-intent-classifier.onrender.com/classify/batch \
+  -H "Content-Type: application/json" \
+  -d '{"texts": ["Thoda discount de do na", "Refund kab aayega?", "Call back later"]}'
+```
+
+```json
+{
+  "results": [
+    {
+      "intent": "price_negotiation",
+      "confidence": 0.9997,
+      "cleaned_text": "Thoda discount de do na",
+      "all_scores": { "price_negotiation": 0.9997, "positive_confirmation": 0.0002, "complaint": 0.0001, "purchase_inquiry": 0.0, "callback_request": 0.0, "not_interested": 0.0 }
+    },
+    {
+      "intent": "complaint",
+      "confidence": 0.9994,
+      "cleaned_text": "Refund kab aayega?",
+      "all_scores": { "complaint": 0.9994, "purchase_inquiry": 0.0004, "price_negotiation": 0.0001, "callback_request": 0.0, "not_interested": 0.0, "positive_confirmation": 0.0001 }
+    },
+    {
+      "intent": "callback_request",
+      "confidence": 0.9996,
+      "cleaned_text": "Call back later",
+      "all_scores": { "callback_request": 0.9996, "not_interested": 0.0002, "complaint": 0.0001, "purchase_inquiry": 0.0001, "price_negotiation": 0.0, "positive_confirmation": 0.0 }
+    }
+  ],
+  "total": 3
 }
 ```
 
@@ -191,6 +225,23 @@ with torch.no_grad():
 
 ---
 
+## Automated Testing & Quality Assurance
+
+The repository includes a comprehensive test suite covering data preprocessing, model configuration integrity, and API endpoint routing.
+
+```bash
+# Run the complete test suite
+pytest -v tests/
+```
+
+- `tests/test_preprocess.py`: Verifies transliteration elongation compression, emoji extraction, excess punctuation normalization, and stratified dataset splitting.
+- `tests/test_api.py`: Validates `/health`, `/api/info`, single `/classify`, vectorized `/classify/batch`, input payload size constraints, and client UI routing.
+- `tests/test_config.py`: Verifies bidirectional label mapping consistency and training hyperparameter constants.
+
+Continuous integration is handled automatically via **GitHub Actions** (`.github/workflows/ci.yml`) on all pushes and pull requests.
+
+---
+
 ## Tech Stack
 
 | Layer | Component | Functionality |
@@ -201,6 +252,7 @@ with torch.no_grad():
 | **Backend API** | FastAPI, Uvicorn | Asynchronous REST microservice |
 | **Frontend UI** | Vanilla HTML, CSS, JavaScript | Interactive web dashboard and voice transcript simulator |
 | **Data Processing** | Scikit-learn, Pandas, Regex | Stratified sampling and text normalization |
+| **Testing & CI/CD** | Pytest, GitHub Actions | Automated unit/integration tests and CI pipeline |
 | **Deployment** | Docker, Render, Hugging Face Hub | Containerized hosting and model registry |
 
 ---
@@ -209,6 +261,9 @@ with torch.no_grad():
 
 ```
 hinglish-intent-classifier/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                     # Continuous Integration workflow
 ├── data/
 │   ├── raw/
 │   │   └── raw_dataset.csv            # Raw dataset
@@ -246,6 +301,10 @@ hinglish-intent-classifier/
 │       ├── train.py                   # LoRA training execution pipeline
 │       ├── compare_runs.py            # Ablation ranking utility
 │       └── evaluate.py                # Final test evaluation and confusion matrix
+├── tests/
+│   ├── test_api.py                    # API and route integration tests
+│   ├── test_config.py                 # Configuration and mapping unit tests
+│   └── test_preprocess.py             # Normalization and splitting tests
 ├── Dockerfile                         # Production container definition
 ├── config.py                          # Global configuration settings
 ├── requirements.txt                   # Dependency list
