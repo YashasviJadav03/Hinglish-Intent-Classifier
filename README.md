@@ -1,27 +1,29 @@
 # 🎙️ Hinglish Intent Classifier — Fine-Tuned Transformer for Code-Mixed Voice-Agent NLU
 
-[![Live API Demo](https://img.shields.io/badge/Render-Live%20API%20Online-brightgreen?logo=render)](https://hinglish-intent-classifier.onrender.com/docs)
+[![Live Web App](https://img.shields.io/badge/Render-Live%20Website%20Active-brightgreen?logo=render)](https://hinglish-intent-classifier.onrender.com/)
+[![Interactive Swagger Docs](https://img.shields.io/badge/FastAPI-Swagger%20Docs-009688?logo=fastapi)](https://hinglish-intent-classifier.onrender.com/docs)
 [![Model on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model%20Card-ffcc4d)](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![PEFT LoRA](https://img.shields.io/badge/PEFT-LoRA%20Adapter-FF6F00)](https://github.com/huggingface/peft)
 [![Docker](https://img.shields.io/badge/Docker-Production%20Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
-> **🌐 Live Interactive Swagger API:** [https://hinglish-intent-classifier.onrender.com/docs](https://hinglish-intent-classifier.onrender.com/docs)  
+> **🌐 Live Interactive Web Application:** [https://hinglish-intent-classifier.onrender.com/](https://hinglish-intent-classifier.onrender.com/)  
+> **📑 Interactive OpenAPI / Swagger Docs:** [https://hinglish-intent-classifier.onrender.com/docs](https://hinglish-intent-classifier.onrender.com/docs)  
 > **🤗 Hugging Face Model Artifacts:** [https://huggingface.co/yashasvijadav03/hinglish-intent-classifier](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier)
 
 ---
 
 ## 📌 Overview
 
-The **Hinglish Intent Classifier** is a production-grade Natural Language Understanding (NLU) service engineered for conversational voice-AI pipelines handling noisy, code-mixed Hindi-English (**Hinglish**) customer calls. 
+The **Hinglish Intent Classifier** is a production-grade Natural Language Understanding (NLU) service and web application engineered for conversational voice-AI pipelines handling noisy, code-mixed Hindi-English (**Hinglish**) customer calls. 
 
 In automated sales, lead qualification, and customer support calls, callers frequently interleave Hindi grammar and Romanized phonetics with English technical terms (*e.g., "Thoda discount de do na price bohot zyada lag raha hai"*, *"Order deliver nahi hua please refund initiate karo"*). This repository implements:
-1. Phonetic elongation normalization, emoji extraction, and transliteration noise cleaning.
-2. An empirical evaluation against a zero-shot multilingual baseline.
-3. Parameter-Efficient Fine-Tuning (**PEFT / LoRA**) on `distilbert-base-multilingual-cased`.
-4. Multi-configuration ablation studies across LoRA ranks and learning rates.
-5. High-throughput inference serving via an asynchronous **FastAPI** microservice and **Docker**.
+1. **Interactive Web Dashboard**: Real-time voice-transcript simulator, animated confidence gauge, and softmax probability distributions.
+2. **Text Normalization Pipeline**: Phonetic elongation reduction, emoji extraction, and transliteration noise cleaning.
+3. **Zero-Shot Baseline**: Empirical benchmarking against multilingual zero-shot classifiers.
+4. **LoRA Fine-Tuning**: Parameter-Efficient Fine-Tuning (**PEFT**) on `distilbert-base-multilingual-cased`.
+5. **Systematic Ablations**: Multi-configuration experiments across LoRA ranks ($r \in \{4, 8, 16\}$) and learning rates.
+6. **Production Microservice**: Asynchronous **FastAPI** service containerized with **Docker** and deployed live on **Render**.
 
 ---
 
@@ -147,24 +149,24 @@ curl -X GET http://localhost:8000/health
 }
 ```
 
-### Classify Utterance
+### Classify Utterance (Live Cloud API)
 ```bash
-curl -X POST http://localhost:8000/classify \
+curl -X POST https://hinglish-intent-classifier.onrender.com/classify \
   -H "Content-Type: application/json" \
   -d '{"text": "Thoda discount de do na bhai price bohot zyada lag raha hai"}'
 ```
 ```json
 {
   "intent": "price_negotiation",
-  "confidence": 0.9989,
+  "confidence": 0.9997,
   "cleaned_text": "Thoda discount de do na bhai price bohot zyada lag raha hai",
   "all_scores": {
-    "complaint": 0.0008,
-    "purchase_inquiry": 0.0001,
-    "price_negotiation": 0.9989,
-    "callback_request": 0.0000,
-    "not_interested": 0.0000,
-    "positive_confirmation": 0.0001
+    "complaint": 0.0001,
+    "purchase_inquiry": 0.0,
+    "price_negotiation": 0.9997,
+    "callback_request": 0.0,
+    "not_interested": 0.0,
+    "positive_confirmation": 0.0002
   }
 }
 ```
@@ -184,7 +186,8 @@ docker run -d -p 8000:8000 --name hinglish-classifier hinglish-intent-api:latest
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Language** | Python 3.10+ | Core language |
+| **Frontend Web App** | HTML5, Vanilla CSS, JS | Glassmorphic voice-agent dashboard & interactive tester |
+| **Language** | Python 3.10+ | Core ML & backend language |
 | **Model Backbone** | Hugging Face Transformers | `distilbert-base-multilingual-cased` |
 | **PEFT / Adapter** | PEFT (LoRA) | Parameter-efficient adapter fine-tuning |
 | **Framework** | PyTorch 2.1+ | Tensor computations and backpropagation |
@@ -192,6 +195,7 @@ docker run -d -p 8000:8000 --name hinglish-classifier hinglish-intent-api:latest
 | **Data Processing** | Pandas, Scikit-learn, Regex | Transliteration cleaning, tokenization, stratification |
 | **Visualization** | Seaborn, Matplotlib | Confusion matrices and metric charting |
 | **Containerization** | Docker | Production container image |
+| **Cloud Hosting** | Render & Hugging Face | Free-tier cloud container deployment |
 
 ---
 
@@ -221,7 +225,11 @@ hinglish-intent-classifier/
 │   ├── __init__.py
 │   ├── api/
 │   │   ├── __init__.py
-│   │   └── main.py                    # FastAPI service (/classify, /health)
+│   │   ├── main.py                    # FastAPI service (/classify, /health, /)
+│   │   └── static/                    # Interactive web dashboard
+│   │       ├── index.html             # Frontend layout & scenario arena
+│   │       ├── style.css              # Glassmorphic dark mode styling
+│   │       └── app.js                 # Real-time inference controller
 │   ├── data/
 │   │   ├── __init__.py
 │   │   ├── load_dataset.py            # Dataset acquisition & domain mapping
@@ -232,10 +240,10 @@ hinglish-intent-classifier/
 │       ├── train.py                   # LoRA fine-tuning training pipeline
 │       ├── compare_runs.py            # Experiment ranking & ablation reporter
 │       └── evaluate.py                # Final test evaluation & error analysis
-├── Dockerfile                         # Production Dockerfile
+├── Dockerfile                         # Low-memory production Dockerfile
 ├── config.py                          # Global paths, classes, and hyperparameters
 ├── requirements.txt                   # Dependency definitions
-├── .gitignore                         # Standard git ignore rules
+├── .gitignore                         # Git ignore rules
 └── README.md                          # Project documentation
 ```
 
@@ -245,4 +253,4 @@ hinglish-intent-classifier/
 
 * **Engineered a Low-Latency NLU Intent Classifier**: Fine-tuned a multilingual transformer (`DistilBERT` + `PEFT LoRA`) for code-mixed Hindi-English voice transcripts, boosting Macro-F1 from **0.3391 to 1.0000 (+194.9%)** over a zero-shot baseline.
 * **Ablation & Parameter-Efficiency**: Executed hyperparameter ablations across LoRA ranks ($r \in \{4, 8, 16\}$) and learning rates; trained only **0.54%** of parameters, preserving base model generalizability while achieving 100% test accuracy.
-* **Production API & Dockerization**: Containerized and served the inference pipeline via asynchronous **FastAPI** with sub-50ms response times, automated transliteration noise preprocessing, and complete probability distribution outputs.
+* **Full-Stack Deployment & Cloud Containerization**: Deployed an interactive web application and asynchronous **FastAPI** microservice to cloud production using low-memory Docker optimizations with sub-50ms inference: [Live Website](https://hinglish-intent-classifier.onrender.com/) | [Model Hub](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier) | [API Docs](https://hinglish-intent-classifier.onrender.com/docs).
