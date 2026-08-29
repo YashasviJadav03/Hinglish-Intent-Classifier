@@ -16,6 +16,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 import torch
 import torch.nn.functional as F
@@ -24,6 +26,7 @@ from peft import PeftModel
 
 # Add project root to path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 sys.path.append(str(BASE_DIR))
 
 import config
@@ -123,6 +126,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static web app files
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 
 class ClassifyRequest(BaseModel):
     text: str = Field(
@@ -140,8 +147,23 @@ class ClassifyResponse(BaseModel):
     all_scores: Dict[str, float]
 
 
-@app.get("/", tags=["System"])
+@app.get("/", tags=["UI"])
 def root():
+    """Serves the interactive web application dashboard."""
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(str(index_file))
+    return {
+        "service": config.API_TITLE,
+        "version": config.API_VERSION,
+        "status": "online",
+        "docs_url": "/docs",
+    }
+
+
+@app.get("/api/info", tags=["System"])
+def api_info():
+    """Returns API and service metadata in JSON."""
     return {
         "service": config.API_TITLE,
         "version": config.API_VERSION,

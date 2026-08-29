@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hinglish Voice-Agent Intent Classifier | AI NLU</title>
+  <meta name="description" content="Production-ready NLU intent detection for code-mixed Hindi-English voice agent transcripts powered by LoRA Fine-Tuned DistilBERT.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Background Glow Orbs -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+
+  <!-- Header Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" x2="12" y1="19" y2="22"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Hinglish<span class="gradient-text">NLU</span></span>
+          <span class="brand-badge">LoRA PEFT v1.0</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="/docs" target="_blank" class="nav-link" id="nav-docs-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          API Docs
+        </a>
+        <a href="https://huggingface.co/yashasvijadav03/hinglish-intent-classifier" target="_blank" class="nav-link" id="nav-hf-link">
+          <span class="hf-emoji">🤗</span> HF Hub
+        </a>
+        <a href="https://github.com/YashasviJadav03/Hinglish-Intent-Classifier" target="_blank" class="nav-btn" id="nav-github-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="main-wrapper">
+    <section class="hero-section">
+      <div class="system-status-pill">
+        <span class="status-dot"></span>
+        <span class="status-text" id="system-status-text">Connecting to Live Inference API...</span>
+      </div>
+      <h1 class="hero-title">
+        Code-Mixed <span class="gradient-text">Hinglish Intent</span> Intelligence
+      </h1>
+      <p class="hero-subtitle">
+        Fine-tuned multilingual transformer (DistilBERT + LoRA PEFT) built for real-time natural language understanding inside noisy conversational sales voice agents.
+      </p>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="app-grid">
+      <!-- Input Column -->
+      <div class="glass-card input-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <span class="step-num">01</span>
+            <div>
+              <h2 class="card-title">Voice Utterance Input</h2>
+              <p class="card-desc">Type code-mixed Hindi-English or pick a scenario below</p>
+            </div>
+          </div>
+          <button class="icon-btn" id="clear-input-btn" title="Clear text">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <!-- Textarea with Live Waveform Simulation -->
+        <div class="input-container">
+          <textarea 
+            id="utterance-input" 
+            placeholder="e.g., Thoda discount de do na, price bohot zyada lag raha hai..." 
+            rows="3"
+            maxlength="250"
+          >Thoda discount de do na, price bohot zyada hai.</textarea>
+          
+          <div class="input-meta">
+            <div class="waveform-anim" id="waveform">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+            <span class="char-count" id="char-counter">46 / 250</span>
+          </div>
+        </div>
+
+        <!-- Quick Sample Pills -->
+        <div class="samples-section">
+          <div class="samples-header">
+            <span class="samples-title">⚡ Try Real Customer Utterances:</span>
+          </div>
+          <div class="sample-pills" id="sample-pills-container">
+            <button class="pill-btn active" data-text="Thoda discount de do na, price bohot zyada hai.">
+              🏷️ Discount / Price
+            </button>
+            <button class="pill-btn" data-text="Mera product abhi tak deliver nahi hua, refund chahiye!">
+              ⚠️ Complaint / Issue
+            </button>
+            <button class="pill-btn" data-text="Haanji done samjho, payment link share kar dijiye.">
+              ✅ Positive Confirmation
+            </button>
+            <button class="pill-btn" data-text="Abhi driving kar raha hoon, baad me phone karna.">
+              📞 Callback Later
+            </button>
+            <button class="pill-btn" data-text="Mujhe ye product bilkul nahi chahiye, do not call me.">
+              🚫 Not Interested
+            </button>
+            <button class="pill-btn" data-text="Bhaiya is plan ke features aur warranty explain kardo.">
+              🔍 Purchase Inquiry
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="classify-btn" class="primary-btn">
+          <span class="btn-text">Classify Intent</span>
+          <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <div class="spinner" id="btn-spinner"></div>
+        </button>
+      </div>
+
+      <!-- Results Column -->
+      <div class="glass-card result-card" id="result-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <span class="step-num">02</span>
+            <div>
+              <h2 class="card-title">NLU Prediction Intelligence</h2>
+              <p class="card-desc">Real-time intent dispatch & softmax distribution</p>
+            </div>
+          </div>
+          <div class="latency-badge" id="latency-badge">
+            <span class="latency-dot"></span>
+            <span id="latency-text">~14ms</span>
+          </div>
+        </div>
+
+        <!-- Top Intent Spotlight -->
+        <div class="top-intent-box" id="top-intent-box">
+          <div class="intent-info">
+            <span class="intent-label-sub">Detected Caller Intent</span>
+            <h3 class="top-intent-name" id="top-intent-name">price_negotiation</h3>
+            <p class="intent-action" id="intent-action">
+              🎯 <strong>Voice Agent Trigger:</strong> Offer standard tier discount coupon or initiate pricing rebuttal protocol.
+            </p>
+          </div>
+          <div class="confidence-circle" id="confidence-circle">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <path id="circle-bar" class="circle" stroke-dasharray="98, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <text x="18" y="20.35" class="percentage" id="confidence-pct">99%</text>
+            </svg>
+            <span class="conf-label">Confidence</span>
+          </div>
+        </div>
+
+        <!-- Distribution Bars -->
+        <div class="distribution-section">
+          <h4 class="dist-title">Softmax Probability Distribution</h4>
+          <div class="dist-bars" id="dist-bars-container">
+            <!-- Dynamically generated intent bars -->
+          </div>
+        </div>
+
+        <!-- Preprocessing Inspection -->
+        <div class="pipeline-inspector">
+          <div class="pipeline-header">
+            <span>Transliteration & Preprocessing Pipeline</span>
+            <span class="clean-tag">Regex + Unicode Normalizer</span>
+          </div>
+          <div class="pipeline-diff">
+            <div class="diff-block">
+              <span class="diff-title">Cleaned Input</span>
+              <code id="diff-cleaned">thoda discount de do na price bohot zyada hai</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benchmarks & Architecture Showcase -->
+    <section class="benchmarks-section">
+      <h2 class="section-title">Model Performance & Architecture</h2>
+      <div class="benchmark-grid">
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-label">Zero-Shot Baseline</span>
+            <span class="bench-model">DistilBERT-MNLI</span>
+          </div>
+          <div class="bench-value low">38.89%</div>
+          <p class="bench-desc">Zero-shot multi-lingual baseline struggled on code-mixed slang and colloquial Hinglish transliteration.</p>
+        </div>
+
+        <div class="bench-card featured">
+          <div class="featured-tag">Production Best</div>
+          <div class="bench-header">
+            <span class="bench-label">LoRA Fine-Tuned</span>
+            <span class="bench-model">DistilBERT + PEFT (r=16)</span>
+          </div>
+          <div class="bench-value highlight">100.00%</div>
+          <p class="bench-desc">Achieved perfect test accuracy & Macro-F1 across all 6 customer intents with only 1.18M trainable parameters.</p>
+        </div>
+
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-label">Parameter Efficiency</span>
+            <span class="bench-model">PEFT LoRA vs Full Fine-Tuning</span>
+          </div>
+          <div class="bench-value">99.1% Saved</div>
+          <p class="bench-desc">Trained only 0.87% of base model weights, resulting in a lightweight 3.5MB adapter suitable for edge voice pipelines.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built with PyTorch, Hugging Face Transformers & FastAPI • Deployed on Render</p>
+      <div class="footer-links">
+        <a href="https://huggingface.co/yashasvijadav03/hinglish-intent-classifier" target="_blank">Hugging Face Model Card</a>
+        <span>•</span>
+        <a href="https://github.com/YashasviJadav03/Hinglish-Intent-Classifier" target="_blank">GitHub Repository</a>
+        <span>•</span>
+        <a href="/docs" target="_blank">Swagger OpenAPI</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
