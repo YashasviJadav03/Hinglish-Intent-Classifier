@@ -1,11 +1,14 @@
 # 🎙️ Hinglish Intent Classifier — Fine-Tuned Transformer for Code-Mixed Voice-Agent NLU
 
+[![Live API Demo](https://img.shields.io/badge/Render-Live%20API%20Online-brightgreen?logo=render)](https://hinglish-intent-classifier.onrender.com/docs)
 [![Model on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model%20Card-ffcc4d)](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![PEFT LoRA](https://img.shields.io/badge/PEFT-LoRA%20Adapter-FF6F00)](https://github.com/huggingface/peft)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Docker](https://img.shields.io/badge/Docker-Production%20Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
+> **🌐 Live Interactive Swagger API:** [https://hinglish-intent-classifier.onrender.com/docs](https://hinglish-intent-classifier.onrender.com/docs)  
+> **🤗 Hugging Face Model Artifacts:** [https://huggingface.co/yashasvijadav03/hinglish-intent-classifier](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier)
 
 ---
 
