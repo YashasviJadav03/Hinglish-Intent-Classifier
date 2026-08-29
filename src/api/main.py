@@ -12,6 +12,7 @@ import sys
 import logging
 from pathlib import Path
 from typing import Dict, Any
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,10 +32,64 @@ from src.data.preprocess import extract_metadata_and_clean
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("hinglish_api")
 
+# Global model state
+MODEL = None
+TOKENIZER = None
+DEVICE = None
+
+
+def get_model_and_tokenizer():
+    """
+    Loads base model and attaches the fine-tuned LoRA adapter if not already in memory.
+    """
+    global MODEL, TOKENIZER, DEVICE
+    if MODEL is not None and TOKENIZER is not None:
+        return MODEL, TOKENIZER, DEVICE
+
+    logger.info("Loading model and tokenizer...")
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    base_model_name = config.DEFAULT_MODEL_NAME
+    adapter_path = config.LORA_ADAPTER_DIR
+
+    if adapter_path.exists() and any(adapter_path.iterdir()):
+        logger.info("Loading fine-tuned LoRA adapter from %s", adapter_path)
+        base_model = AutoModelForSequenceClassification.from_pretrained(
+            base_model_name,
+            num_labels=config.NUM_LABELS,
+            id2label=config.ID2LABEL,
+            label2id=config.LABEL2ID,
+        )
+        MODEL = PeftModel.from_pretrained(base_model, str(adapter_path))
+        TOKENIZER = AutoTokenizer.from_pretrained(str(adapter_path) if (adapter_path / "vocab.txt").exists() else base_model_name)
+    else:
+        logger.warning("LoRA adapter directory empty. Loading base multilingual transformer: %s", base_model_name)
+        MODEL = AutoModelForSequenceClassification.from_pretrained(
+            base_model_name,
+            num_labels=config.NUM_LABELS,
+            id2label=config.ID2LABEL,
+            label2id=config.LABEL2ID,
+        )
+        TOKENIZER = AutoTokenizer.from_pretrained(base_model_name)
+
+    MODEL.to(DEVICE)
+    MODEL.eval()
+    logger.info("Model ready for inference!")
+    return MODEL, TOKENIZER, DEVICE
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Load model into memory
+    get_model_and_tokenizer()
+    yield
+    # Shutdown logic if needed
+
+
 app = FastAPI(
     title=config.API_TITLE,
     version=config.API_VERSION,
     description="FastAPI service serving fine-tuned LoRA Transformer for noisy code-mixed Hindi-English voice utterances.",
+    lifespan=lifespan,
 )
 
 # Enable CORS for web apps and dashboard integrations
@@ -45,11 +100,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Global model state
-MODEL = None
-TOKENIZER = None
-DEVICE = None
 
 
 class ClassifyRequest(BaseModel):
@@ -68,49 +118,6 @@ class ClassifyResponse(BaseModel):
     all_scores: Dict[str, float]
 
 
-@app.on_event("startup")
-def load_model():
-    """
-    Initializes tokenizer and model on server startup.
-    """
-    global MODEL, TOKENIZER, DEVICE
-    logger.info("Initializing Hinglish Intent Classifier service...")
-
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info("Serving on compute device: %s", DEVICE)
-
-    base_model_name = config.DEFAULT_MODEL_NAME
-    adapter_path = config.LORA_ADAPTER_DIR
-
-    try:
-        if adapter_path.exists() and any(adapter_path.iterdir()):
-            logger.info("Loading fine-tuned LoRA adapter from %s", adapter_path)
-            base_model = AutoModelForSequenceClassification.from_pretrained(
-                base_model_name,
-                num_labels=config.NUM_LABELS,
-                id2label=config.ID2LABEL,
-                label2id=config.LABEL2ID,
-            )
-            MODEL = PeftModel.from_pretrained(base_model, str(adapter_path))
-            TOKENIZER = AutoTokenizer.from_pretrained(str(adapter_path) if (adapter_path / "vocab.txt").exists() else base_model_name)
-        else:
-            logger.warning("LoRA adapter not found. Loading base checkpoint: %s", base_model_name)
-            MODEL = AutoModelForSequenceClassification.from_pretrained(
-                base_model_name,
-                num_labels=config.NUM_LABELS,
-                id2label=config.ID2LABEL,
-                label2id=config.LABEL2ID,
-            )
-            TOKENIZER = AutoTokenizer.from_pretrained(base_model_name)
-
-        MODEL.to(DEVICE)
-        MODEL.eval()
-        logger.info("Model loaded and ready for inference!")
-    except Exception as e:
-        logger.error("Failed to load model: %s", e)
-        raise RuntimeError(f"Model initialization failed: {e}")
-
-
 @app.get("/", tags=["System"])
 def root():
     return {
@@ -123,18 +130,18 @@ def root():
 
 @app.get("/health", tags=["System"])
 def health():
+    model, _, device = get_model_and_tokenizer()
     return {
         "status": "healthy",
-        "model_loaded": MODEL is not None,
-        "device": str(DEVICE),
+        "model_loaded": model is not None,
+        "device": str(device),
         "intent_classes": config.INTENT_LABELS,
     }
 
 
 @app.post("/classify", response_model=ClassifyResponse, tags=["Inference"])
 def classify_utterance(request: ClassifyRequest):
-    if MODEL is None or TOKENIZER is None:
-        raise HTTPException(status_code=503, detail="Model is not loaded or initializing.")
+    model, tokenizer, device = get_model_and_tokenizer()
 
     raw_text = request.text.strip()
     if not raw_text:
@@ -146,23 +153,23 @@ def classify_utterance(request: ClassifyRequest):
         clean_text = raw_text
 
     # Tokenize
-    inputs = TOKENIZER(
+    inputs = tokenizer(
         clean_text,
         padding=True,
         truncation=True,
         max_length=config.MAX_LENGTH,
         return_tensors="pt",
-    ).to(DEVICE)
+    ).to(device)
 
     with torch.no_grad():
-        outputs = MODEL(**inputs)
+        outputs = model(**inputs)
         probs = F.softmax(outputs.logits, dim=-1).squeeze(0).cpu().numpy()
 
     top_idx = int(probs.argmax())
     predicted_intent = config.ID2LABEL[top_idx]
-    confidence = float(round(probs[top_idx], 4))
+    confidence = float(round(float(probs[top_idx]), 4))
 
-    all_scores = {config.ID2LABEL[i]: float(round(prob, 4)) for i, prob in enumerate(probs)}
+    all_scores = {config.ID2LABEL[i]: float(round(float(prob), 4)) for i, prob in enumerate(probs)}
 
     return ClassifyResponse(
         intent=predicted_intent,

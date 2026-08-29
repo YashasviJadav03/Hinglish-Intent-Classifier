@@ -1,3 +1,4 @@
 run_name,timestamp,model_name,learning_rate,lora_r,lora_alpha,lora_dropout,epochs,train_batch_size,train_loss,val_loss,val_accuracy,val_macro_f1,adapter_dir
 lora_r4_lr3e4,2026-08-29T23:12:44.014769,distilbert-base-multilingual-cased,0.0003,4,8,0.1,5,16,0.6619,0.2058,0.9444,0.9431,D:\Hinglish-Intent-Classifier\models\lora-adapter\lora_r4_lr3e4
 lora_r8_lr3e4,2026-08-29T23:17:11.980196,distilbert-base-multilingual-cased,0.0003,8,16,0.1,4,16,0.7426,0.2705,0.9213,0.9207,D:\Hinglish-Intent-Classifier\models\lora-adapter\lora_r8_lr3e4
+lora_r16_lr5e4,2026-08-29T23:21:20.127929,distilbert-base-multilingual-cased,0.0005,16,32,0.1,4,16,0.4257,0.0254,1.0,1.0,D:\Hinglish-Intent-Classifier\models\lora-adapter\lora_r16_lr5e4

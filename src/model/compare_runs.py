@@ -62,20 +62,30 @@ def compare_and_report_runs() -> pd.DataFrame:
     print("-" * 80)
 
     best_run = df_sorted.iloc[0]
-    print(f"★ BEST CONFIGURATION: {best_run.get('run_name')}")
-    print(f"  • LoRA Rank (r) : {best_run.get('lora_r')}")
-    print(f"  • Learning Rate : {best_run.get('learning_rate')}")
-    print(f"  • Epochs        : {best_run.get('epochs')}")
-    print(f"  • Val Macro-F1  : {best_run.get('val_macro_f1'):.4f}")
-    print(f"  • Val Accuracy  : {best_run.get('val_accuracy'):.4f}")
-    print(f"  • Adapter Path  : {best_run.get('adapter_dir', config.LORA_ADAPTER_DIR)}")
+    print(f"[*] BEST CONFIGURATION: {best_run.get('run_name')}")
+    print(f"  - LoRA Rank (r) : {best_run.get('lora_r')}")
+    print(f"  - Learning Rate : {best_run.get('learning_rate')}")
+    print(f"  - Epochs        : {best_run.get('epochs')}")
+    print(f"  - Val Macro-F1  : {best_run.get('val_macro_f1'):.4f}")
+    print(f"  - Val Accuracy  : {best_run.get('val_accuracy'):.4f}")
+    print(f"  - Adapter Path  : {best_run.get('adapter_dir', config.LORA_ADAPTER_DIR)}")
     print("=" * 80 + "\n")
 
     # Save summary to markdown
     md_summary_path = config.RESULTS_DIR / "ablation_summary.md"
+    
+    # Generate markdown table string natively
+    headers = list(table_df.columns)
+    header_row = "| " + " | ".join(headers) + " |"
+    separator_row = "| " + " | ".join(["---"] * len(headers)) + " |"
+    data_rows = []
+    for _, row in table_df.iterrows():
+        data_rows.append("| " + " | ".join(str(val) for val in row) + " |")
+    md_table = "\n".join([header_row, separator_row] + data_rows)
+
     with open(md_summary_path, "w", encoding="utf-8") as f:
         f.write("# LoRA Fine-Tuning Ablation Study Summary\n\n")
-        f.write(table_df.to_markdown(index=False))
+        f.write(md_table)
         f.write(f"\n\n**Best Performing Run**: `{best_run.get('run_name')}` with **Macro-F1**: `{best_run.get('val_macro_f1')}`\n")
     logger.info("Saved ablation summary table to %s", md_summary_path)
 
