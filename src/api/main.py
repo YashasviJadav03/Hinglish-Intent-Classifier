@@ -102,10 +102,49 @@ def get_model_and_tokenizer():
     return MODEL, TOKENIZER, DEVICE
 
 
+class ClassifyRequest(BaseModel):
+    text: str = Field(
+        ...,
+        min_length=1,
+        max_length=1000,
+        description="The customer voice transcript utterance in code-mixed Hinglish.",
+        example="Thoda discount de do na, price bohot zyada hai.",
+    )
+
+
+class ClassifyBatchRequest(BaseModel):
+    texts: list[str] = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="List of Hinglish utterances to classify in batch.",
+        example=["Thoda discount de do na", "Refund kab aayega?"],
+    )
+
+
+class ClassifyResponse(BaseModel):
+    intent: str
+    confidence: float
+    cleaned_text: str
+    all_scores: Dict[str, float]
+
+
+class ClassifyBatchResponse(BaseModel):
+    results: list[ClassifyResponse]
+    total: int
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Load model into memory
-    get_model_and_tokenizer()
+    # Startup: Load model into memory and perform warmup inference
+    model, tokenizer, device = get_model_and_tokenizer()
+    try:
+        warmup_inputs = tokenizer("warmup query", return_tensors="pt", max_length=32, truncation=True).to(device)
+        with torch.no_grad():
+            _ = model(**warmup_inputs)
+        logger.info("Model warmup inference completed successfully.")
+    except Exception as e:
+        logger.warning("Warmup failed (non-fatal): %s", e)
     yield
     # Shutdown logic if needed
 
@@ -129,22 +168,6 @@ app.add_middleware(
 # Mount static web app files
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-
-class ClassifyRequest(BaseModel):
-    text: str = Field(
-        ...,
-        min_length=1,
-        description="The customer voice transcript utterance in code-mixed Hinglish.",
-        example="Thoda discount de do na, price bohot zyada hai.",
-    )
-
-
-class ClassifyResponse(BaseModel):
-    intent: str
-    confidence: float
-    cleaned_text: str
-    all_scores: Dict[str, float]
 
 
 @app.get("/", tags=["UI"])
@@ -191,36 +214,87 @@ def classify_utterance(request: ClassifyRequest):
     if not raw_text:
         raise HTTPException(status_code=400, detail="Utterance text cannot be empty.")
 
-    # Apply preprocessing normalizations
-    clean_text, emojis, excess_punct = extract_metadata_and_clean(raw_text)
-    if not clean_text:
-        clean_text = raw_text
+    try:
+        # Apply preprocessing normalizations
+        clean_text, emojis, excess_punct = extract_metadata_and_clean(raw_text)
+        if not clean_text:
+            clean_text = raw_text
 
-    # Tokenize
-    inputs = tokenizer(
-        clean_text,
-        padding=True,
-        truncation=True,
-        max_length=config.MAX_LENGTH,
-        return_tensors="pt",
-    ).to(device)
+        # Tokenize
+        inputs = tokenizer(
+            clean_text,
+            padding=True,
+            truncation=True,
+            max_length=config.MAX_LENGTH,
+            return_tensors="pt",
+        ).to(device)
 
-    with torch.no_grad():
-        outputs = model(**inputs)
-        probs = F.softmax(outputs.logits, dim=-1).squeeze(0).cpu().numpy()
+        with torch.no_grad():
+            outputs = model(**inputs)
+            probs = F.softmax(outputs.logits, dim=-1).squeeze(0).cpu().numpy()
 
-    top_idx = int(probs.argmax())
-    predicted_intent = config.ID2LABEL[top_idx]
-    confidence = float(round(float(probs[top_idx]), 4))
+        top_idx = int(probs.argmax())
+        predicted_intent = config.ID2LABEL[top_idx]
+        confidence = float(round(float(probs[top_idx]), 4))
 
-    all_scores = {config.ID2LABEL[i]: float(round(float(prob), 4)) for i, prob in enumerate(probs)}
+        all_scores = {config.ID2LABEL[i]: float(round(float(prob), 4)) for i, prob in enumerate(probs)}
 
-    return ClassifyResponse(
-        intent=predicted_intent,
-        confidence=confidence,
-        cleaned_text=clean_text,
-        all_scores=all_scores,
-    )
+        return ClassifyResponse(
+            intent=predicted_intent,
+            confidence=confidence,
+            cleaned_text=clean_text,
+            all_scores=all_scores,
+        )
+    except Exception as e:
+        logger.error("Inference failed: %s", e)
+        raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
+
+
+@app.post("/classify/batch", response_model=ClassifyBatchResponse, tags=["Inference"])
+def classify_batch(request: ClassifyBatchRequest):
+    """Processes a batch of utterances in a single vectorized forward pass."""
+    model, tokenizer, device = get_model_and_tokenizer()
+
+    if not request.texts:
+        raise HTTPException(status_code=400, detail="Texts list cannot be empty.")
+
+    try:
+        cleaned_texts = []
+        for t in request.texts:
+            clean_t, _, _ = extract_metadata_and_clean(t.strip())
+            cleaned_texts.append(clean_t if clean_t else t.strip())
+
+        inputs = tokenizer(
+            cleaned_texts,
+            padding=True,
+            truncation=True,
+            max_length=config.MAX_LENGTH,
+            return_tensors="pt",
+        ).to(device)
+
+        with torch.no_grad():
+            outputs = model(**inputs)
+            probs_matrix = F.softmax(outputs.logits, dim=-1).cpu().numpy()
+
+        results = []
+        for i, probs in enumerate(probs_matrix):
+            top_idx = int(probs.argmax())
+            predicted_intent = config.ID2LABEL[top_idx]
+            confidence = float(round(float(probs[top_idx]), 4))
+            all_scores = {config.ID2LABEL[j]: float(round(float(p), 4)) for j, p in enumerate(probs)}
+            results.append(
+                ClassifyResponse(
+                    intent=predicted_intent,
+                    confidence=confidence,
+                    cleaned_text=cleaned_texts[i],
+                    all_scores=all_scores,
+                )
+            )
+
+        return ClassifyBatchResponse(results=results, total=len(results))
+    except Exception as e:
+        logger.error("Batch inference failed: %s", e)
+        raise HTTPException(status_code=500, detail=f"Batch inference error: {str(e)}")
 
 
 if __name__ == "__main__":
