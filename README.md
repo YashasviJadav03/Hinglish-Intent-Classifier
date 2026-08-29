@@ -1,12 +1,11 @@
-# Hinglish Intent Classifier — Fine-Tuned Transformer for Code-Mixed Voice-Agent NLU
+# 🎙️ Hinglish Intent Classifier — Fine-Tuned Transformer for Code-Mixed Voice-Agent NLU
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![HuggingFace Transformers](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers-5.x-FFD21E)](https://huggingface.co/transformers/)
-[![PEFT LoRA](https://img.shields.io/badge/PEFT-LoRA-FF6F00)](https://github.com/huggingface/peft)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Model on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model%20Card-ffcc4d)](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
+[![PEFT LoRA](https://img.shields.io/badge/PEFT-LoRA%20Adapter-FF6F00)](https://github.com/huggingface/peft)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
