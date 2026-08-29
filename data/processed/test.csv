@@ -1,0 +1,217 @@
+text,intent,clean_text,emojis,excess_punct_count,label
+Annual maintenance contract ka renewal charge kitna hota hai?,purchase_inquiry,Annual maintenance contract ka renewal charge kitna hota hai?,,0,1
+Installation charges wave-off kar doge to main aaj hi deal close kar lunga.,price_negotiation,Installation charges wave-off kar doge to main aaj hi deal close kar lunga.,,0,2
+"Hello team, Main retired person hu mere kaam ka nahi hai ye.",not_interested,"Hello team, Main retired person hu mere kaam ka nahi hai ye.",,0,4
+"Hey, Last final amount batao kitna payment karna hoga final discount ke baad.!",price_negotiation,"Hey, Last final amount batao kitna payment karna hoga final discount ke baad.!",,0,2
+Sunna Agar 2 years ka subscription lu to kuch extra discount doge?...,price_negotiation,Sunna Agar 2 years ka subscription lu to kuch extra discount doge?.,,1,2
+"Hey, Aapka executive kal sham ko call kare to comfortable rahega.!",callback_request,"Hey, Aapka executive kal sham ko call kare to comfortable rahega.!",,0,3
+Bhai First time customer ke liye koi introductory discount voucher hai? jaldi batao,price_negotiation,Bhai First time customer ke liye koi introductory discount voucher hai? jaldi batao,,0,2
+"Hello team, Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha.",complaint,"Hello team, Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha.",,0,0
+Sir Ye product description se match nahi karta bilkul fake item hai. kindly confirm,complaint,Sir Ye product description se match nahi karta bilkul fake item hai. kindly confirm,,0,0
+Dekho Annual maintenance contract ka renewal charge kitna hota hai? actually,purchase_inquiry,Dekho Annual maintenance contract ka renewal charge kitna hota hai? actually,,0,1
+"Hello team, Haanji bilkul, main offer accept karta hu.",positive_confirmation,"Hello team, Haanji bilkul, main offer accept karta hu.",,0,5
+Service agent time pe nahi aaya aur call bhi cancel kar diya.,complaint,Service agent time pe nahi aaya aur call bhi cancel kar diya.,,0,0
+Arre Student discount ya referral discount apply ho sakta hai kya ispe? please,price_negotiation,Arre Student discount ya referral discount apply ho sakta hai kya ispe? please,,0,2
+EMI options kaun kaun se credit card pe valid hain?,purchase_inquiry,EMI options kaun kaun se credit card pe valid hain?,,0,1
+"Sunna Deal final hai, kal subah technician ko installation ke liye bhej do....",positive_confirmation,"Sunna Deal final hai, kal subah technician ko installation ke liye bhej do.",,1,5
+"Arre Filhal koi investment plan nahi hai mera, please stop calling. please",not_interested,"Arre Filhal koi investment plan nahi hai mera, please stop calling. please",,0,4
+"Hello team, Aap note down kar lo, kal dopehar 1 baje callback fix kar lo.",callback_request,"Hello team, Aap note down kar lo, kal dopehar 1 baje callback fix kar lo.",,0,3
+"Arre Internet speed promise se half bhi nahi aa rahi hai, complaint file karo. please",complaint,"Arre Internet speed promise se half bhi nahi aa rahi hai, complaint file karo. please",,0,0
+"Arre Currently driving on highway, safety issue hai call back later. please",callback_request,"Arre Currently driving on highway, safety issue hai call back later. please",,0,3
+"Hey, Ghar pe koi guest aaye hue hain, kal call kar sakte ho kya?!",callback_request,"Hey, Ghar pe koi guest aaye hue hain, kal call kar sakte ho kya?!",,0,3
+"Hey, Sahi hai offer, main interested hu account activate kar do.!",positive_confirmation,"Hey, Sahi hai offer, main interested hu account activate kar do.!",,0,5
+"Arre Delivery boy ne package door pe fek ke chala gaya, box damaged hai. please",complaint,"Arre Delivery boy ne package door pe fek ke chala gaya, box damaged hai. please",,0,0
+"Sir Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo. kindly confirm",callback_request,"Sir Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo. kindly confirm",,0,3
+"Bhai Aap note down kar lo, kal dopehar 1 baje callback fix kar lo. jaldi batao",callback_request,"Bhai Aap note down kar lo, kal dopehar 1 baje callback fix kar lo. jaldi batao",,0,3
+Bhai Thoda price kam karo toh main apne 2 friends ko bhi recommend karunga. jaldi batao,price_negotiation,Bhai Thoda price kam karo toh main apne 2 friends ko bhi recommend karunga. jaldi batao,,0,2
+Please drop a callback request for tomorrow evening.,callback_request,Please drop a callback request for tomorrow evening.,,0,3
+"Dekho Court hearing me hu, can not speak right now call later. actually",callback_request,"Dekho Court hearing me hu, can not speak right now call later. actually",,0,3
+Ye product description se match nahi karta bilkul fake item hai.,complaint,Ye product description se match nahi karta bilkul fake item hai.,,0,0
+Dekho Price negotiation ke liye manager se baat karwa sakte ho kya? actually,price_negotiation,Dekho Price negotiation ke liye manager se baat karwa sakte ho kya? actually,,0,2
+Bhai Kya exchange offer chal raha hai puraane phone par? jaldi batao,purchase_inquiry,Bhai Kya exchange offer chal raha hai puraane phone par? jaldi batao,,0,1
+"Hello team, Agar advance me pay kar du pura amount to extra off milega?",price_negotiation,"Hello team, Agar advance me pay kar du pura amount to extra off milega?",,0,2
+Sir Mujhe compensation chahiye jo inconvenience create hui hai. kindly confirm,complaint,Sir Mujhe compensation chahiye jo inconvenience create hui hai. kindly confirm,,0,0
+Sir Mechanic ne repair theek se nahi kiya aur machine fir se band ho gayi. kindly confirm,complaint,Sir Mechanic ne repair theek se nahi kiya aur machine fir se band ho gayi. kindly confirm,,0,0
+Bhai Customization options available hain kya furniture design me? jaldi batao,purchase_inquiry,Bhai Customization options available hain kya furniture design me? jaldi batao,,0,1
+"Hey, Mujhe kisi bhi course ya training me koi interest nahi hai.!",not_interested,"Hey, Mujhe kisi bhi course ya training me koi interest nahi hai.!",,0,4
+"Bhai Galat product bhej diya aapne, mujhe ye wala nahi chahiye tha. jaldi batao",complaint,"Bhai Galat product bhej diya aapne, mujhe ye wala nahi chahiye tha. jaldi batao",,0,0
+Warranty claim karne me itna issue kyu aa raha hai?,complaint,Warranty claim karne me itna issue kyu aa raha hai?,,0,0
+"Sir Aapki voice clearly nahi aa rahi, 15 minute baad fir se phone karo. kindly confirm",callback_request,"Sir Aapki voice clearly nahi aa rahi, 15 minute baad fir se phone karo. kindly confirm",,0,3
+"Hello team, Refund initiate huye 10 din ho gaye par bank me credit nahi aaya.",complaint,"Hello team, Refund initiate huye 10 din ho gaye par bank me credit nahi aaya.",,0,0
+"Hey, Mujhe shares ya trading me koi interest nahi hai please call mat karo.!",not_interested,"Hey, Mujhe shares ya trading me koi interest nahi hai please call mat karo.!",,0,4
+"Sunna Yes everything looks good to me, proceed immediately....",positive_confirmation,"Sunna Yes everything looks good to me, proceed immediately.",,1,5
+Bhai Mujhe kisi bhi course ya training me koi interest nahi hai. jaldi batao,not_interested,Bhai Mujhe kisi bhi course ya training me koi interest nahi hai. jaldi batao,,0,4
+Sir Warranty period kitne saal ka hai is electrical appliance ka? kindly confirm,purchase_inquiry,Sir Warranty period kitne saal ka hai is electrical appliance ka? kindly confirm,,0,1
+"Sunna Haan bilkul theek hai, aap booking proceed kar dijiye....",positive_confirmation,"Sunna Haan bilkul theek hai, aap booking proceed kar dijiye.",,1,5
+Sir Is insurance policy ke coverage details aur terms & conditions share karo. kindly confirm,purchase_inquiry,Sir Is insurance policy ke coverage details aur terms & conditions share karo. kindly confirm,,0,1
+"Arre Theek hai mujhe ye deal pasand aayi, lock kar dijiye. please",positive_confirmation,"Arre Theek hai mujhe ye deal pasand aayi, lock kar dijiye. please",,0,5
+Sir Theek hai pack karke dispatch karwa dijiye. kindly confirm,positive_confirmation,Sir Theek hai pack karke dispatch karwa dijiye. kindly confirm,,0,5
+"Hey, Budget bhi nahi hai aur interest bhi nahi, thank you.!",not_interested,"Hey, Budget bhi nahi hai aur interest bhi nahi, thank you.!",,0,4
+"Hello team, Network connectivity issue solve nahi hua 2 weeks se.",complaint,"Hello team, Network connectivity issue solve nahi hua 2 weeks se.",,0,0
+Dekho Aapka executive kal sham ko call kare to comfortable rahega. actually,callback_request,Dekho Aapka executive kal sham ko call kare to comfortable rahega. actually,,0,3
+"Bhai Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha. jaldi batao",complaint,"Bhai Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha. jaldi batao",,0,0
+"Hello team, Is banquet hall ki capacity kitne guests ki hai wedding ke liye?",purchase_inquiry,"Hello team, Is banquet hall ki capacity kitne guests ki hai wedding ke liye?",,0,1
+"Sunna Abhi shift chal rahi hai factory me, night 9 PM call back karna....",callback_request,"Sunna Abhi shift chal rahi hai factory me, night 9 PM call back karna.",,1,3
+Course syllabus aur duration ke baare me detail chahiye.,purchase_inquiry,Course syllabus aur duration ke baare me detail chahiye.,,0,1
+"Hello team, Can we schedule this discussion for tomorrow morning at 10:30 AM?",callback_request,"Hello team, Can we schedule this discussion for tomorrow morning at 10:30 AM?",,0,3
+"Meeting me busy hu abhi, kal subah 10 baje call karna.",callback_request,"Meeting me busy hu abhi, kal subah 10 baje call karna.",,0,3
+"Hello team, Daily 10 call aate hain aapke, block list me daal raha hu number.",not_interested,"Hello team, Daily 10 call aate hain aapke, block list me daal raha hu number.",,0,4
+"Hello team, Aap registration submit kar do, sab documents valid hain.",positive_confirmation,"Hello team, Aap registration submit kar do, sab documents valid hain.",,0,5
+Bhai Price negotiation ke liye manager se baat karwa sakte ho kya? jaldi batao,price_negotiation,Bhai Price negotiation ke liye manager se baat karwa sakte ho kya? jaldi batao,,0,2
+"Dekho Bilkul agree hu terms se, KYC verification complete kar lete hain. actually",positive_confirmation,"Dekho Bilkul agree hu terms se, KYC verification complete kar lete hain. actually",,0,5
+Sunna Warranty period kitne saal ka hai is electrical appliance ka?...,purchase_inquiry,Sunna Warranty period kitne saal ka hai is electrical appliance ka?.,,1,1
+Arre Meri job change ho gayi hai to abhi mujhe iski zarurat nahi. please,not_interested,Arre Meri job change ho gayi hai to abhi mujhe iski zarurat nahi. please,,0,4
+"Hey, Bilkul agree hu terms se, KYC verification complete kar lete hain.!",positive_confirmation,"Hey, Bilkul agree hu terms se, KYC verification complete kar lete hain.!",,0,5
+"Hey, Sure, main online advance token amount transfer kar raha hu abhi.!",positive_confirmation,"Hey, Sure, main online advance token amount transfer kar raha hu abhi.!",,0,5
+"Hello team, Abhi class chal rahi hai student ki, dopehar 3 baje phone lagana.",callback_request,"Hello team, Abhi class chal rahi hai student ki, dopehar 3 baje phone lagana.",,0,3
+Agar main full payment cash me karu to best price kya doge?,price_negotiation,Agar main full payment cash me karu to best price kya doge?,,0,2
+Sunna Refund initiate huye 10 din ho gaye par bank me credit nahi aaya....,complaint,Sunna Refund initiate huye 10 din ho gaye par bank me credit nahi aaya.,,1,0
+"Arre Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again. please",not_interested,"Arre Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again. please",,0,4
+Sunna Kya is plan me international roaming included hai?...,purchase_inquiry,Sunna Kya is plan me international roaming included hai?.,,1,1
+Arre Kya ye model black color me available hai stock me? please,purchase_inquiry,Arre Kya ye model black color me available hai stock me? please,,0,1
+Without GST price kitna padega agar invoice nahi chahiye?,price_negotiation,Without GST price kitna padega agar invoice nahi chahiye?,,0,2
+"Arre Haan plan finalize ho gaya hai, invoice raise kar do. please",positive_confirmation,"Arre Haan plan finalize ho gaya hai, invoice raise kar do. please",,0,5
+"Hello team, Food totally cold and stale tha, hygiene bilkul zero hai.",complaint,"Hello team, Food totally cold and stale tha, hygiene bilkul zero hai.",,0,0
+Sir Final quote kitna doge agar main 5 units ek sath buy karu? kindly confirm,price_negotiation,Sir Final quote kitna doge agar main 5 units ek sath buy karu? kindly confirm,,0,2
+Dekho EMI options kaun kaun se credit card pe valid hain? actually,purchase_inquiry,Dekho EMI options kaun kaun se credit card pe valid hain? actually,,0,1
+Arre Agar advance me pay kar du pura amount to extra off milega? please,price_negotiation,Arre Agar advance me pay kar du pura amount to extra off milega? please,,0,2
+Arre Kya certificate valid hoga international job applications ke liye? please,purchase_inquiry,Arre Kya certificate valid hoga international job applications ke liye? please,,0,1
+"Dekho Food quantity bohot kam thi price ke hisab se, fraud hai ye. actually",complaint,"Dekho Food quantity bohot kam thi price ke hisab se, fraud hai ye. actually",,0,0
+"I have already purchased from another brand, close my lead.",not_interested,"I have already purchased from another brand, close my lead.",,0,4
+"Hey, Is smart TV me Netflix aur Prime Video pre-installed aata hai?!",purchase_inquiry,"Hey, Is smart TV me Netflix aur Prime Video pre-installed aata hai?!",,0,1
+Bhai Kya aap test drive arrange karwa sakte ho weekend par? jaldi batao,purchase_inquiry,Bhai Kya aap test drive arrange karwa sakte ho weekend par? jaldi batao,,0,1
+"Thoda discount de do na, price thoda zyada lag raha hai.",price_negotiation,"Thoda discount de do na, price thoda zyada lag raha hai.",,0,2
+"Sunna Online price to isse sasta dikha raha hai, match karoge rate?...",price_negotiation,"Sunna Online price to isse sasta dikha raha hai, match karoge rate?.",,1,2
+"Sir Perfect plan hai ye, sign up form ka link send karo. kindly confirm",positive_confirmation,"Sir Perfect plan hai ye, sign up form ka link send karo. kindly confirm",,0,5
+"Hey, Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo.!",callback_request,"Hey, Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo.!",,0,3
+"Hello team, Yes proceed with the subscription plan, credit card details shared.",positive_confirmation,"Hello team, Yes proceed with the subscription plan, credit card details shared.",,0,5
+Mujhe kisi bhi course ya training me koi interest nahi hai.,not_interested,Mujhe kisi bhi course ya training me koi interest nahi hai.,,0,4
+"Arre Haanji bilkul, main offer accept karta hu. please",positive_confirmation,"Arre Haanji bilkul, main offer accept karta hu. please",,0,5
+"Mujhe property nahi kharidni hai, wrong number pe call kiya hai.",not_interested,"Mujhe property nahi kharidni hai, wrong number pe call kiya hai.",,0,4
+"Hey, I have already purchased from another brand, close my lead.!",not_interested,"Hey, I have already purchased from another brand, close my lead.!",,0,4
+"Bhai Not interested at all, please remove my mobile number from your database. jaldi batao",not_interested,"Bhai Not interested at all, please remove my mobile number from your database. jaldi batao",,0,4
+"Hey, Aapke competitor ka quote dekhoge to aap bhi price kam kar doge.!",price_negotiation,"Hey, Aapke competitor ka quote dekhoge to aap bhi price kam kar doge.!",,0,2
+"Hello team, Service agent time pe nahi aaya aur call bhi cancel kar diya.",complaint,"Hello team, Service agent time pe nahi aaya aur call bhi cancel kar diya.",,0,0
+Sunna Last final amount batao kitna payment karna hoga final discount ke baad....,price_negotiation,Sunna Last final amount batao kitna payment karna hoga final discount ke baad.,,1,2
+"Hello team, Aap log bar bar phone karke pareshan mat karo, DND activate kar do.",not_interested,"Hello team, Aap log bar bar phone karke pareshan mat karo, DND activate kar do.",,0,4
+"Hey, Sir bilkul interested nahi hu, time waste mat kijiye.!",not_interested,"Hey, Sir bilkul interested nahi hu, time waste mat kijiye.!",,0,4
+Dekho Is watch me heart rate aur SpO2 tracking sensor accurate hai? actually,purchase_inquiry,Dekho Is watch me heart rate aur SpO2 tracking sensor accurate hai? actually,,0,1
+"Arre Budget thoda tight hai, kuch festive discount ya promo code laga do. please",price_negotiation,"Arre Budget thoda tight hai, kuch festive discount ya promo code laga do. please",,0,2
+"Hello team, Bhai thoda reasonable lagao, itna high price afford nahi ho payega.",price_negotiation,"Hello team, Bhai thoda reasonable lagao, itna high price afford nahi ho payega.",,0,2
+"Sir Sir bilkul interested nahi hu, time waste mat kijiye. kindly confirm",not_interested,"Sir Sir bilkul interested nahi hu, time waste mat kijiye. kindly confirm",,0,4
+"Sab details approve kar di hain maine, process aage badhao.",positive_confirmation,"Sab details approve kar di hain maine, process aage badhao.",,0,5
+"Hello team, Warranty period kitne saal ka hai is electrical appliance ka?",purchase_inquiry,"Hello team, Warranty period kitne saal ka hai is electrical appliance ka?",,0,1
+Sunna Is insurance policy ke coverage details aur terms & conditions share karo....,purchase_inquiry,Sunna Is insurance policy ke coverage details aur terms & conditions share karo.,,1,1
+"Dekho Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai. actually",complaint,"Dekho Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai. actually",,0,0
+"Hey, Aapki service bohot bekar hai, refund kab milega mera?!",complaint,"Hey, Aapki service bohot bekar hai, refund kab milega mera?!",,0,0
+"Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again.",not_interested,"Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again.",,0,4
+"Sunna Sure, main online advance token amount transfer kar raha hu abhi....",positive_confirmation,"Sunna Sure, main online advance token amount transfer kar raha hu abhi.",,1,5
+"Sir Aap log bar bar phone karke pareshan mat karo, DND activate kar do. kindly confirm",not_interested,"Sir Aap log bar bar phone karke pareshan mat karo, DND activate kar do. kindly confirm",,0,4
+"Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai.",complaint,"Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai.",,0,0
+Sunna EMI options kaun kaun se credit card pe valid hain?...,purchase_inquiry,Sunna EMI options kaun kaun se credit card pe valid hain?.,,1,1
+Arre Yes please send the executive for document collection at my home. please,positive_confirmation,Arre Yes please send the executive for document collection at my home. please,,0,5
+Sir Compatibility issue to nahi aayegi Mac OS ke sath? kindly confirm,purchase_inquiry,Sir Compatibility issue to nahi aayegi Mac OS ke sath? kindly confirm,,0,1
+"Hello team, Bilkul requirement nahi hai, goodbye.",not_interested,"Hello team, Bilkul requirement nahi hai, goodbye.",,0,4
+Dekho Customization options available hain kya furniture design me? actually,purchase_inquiry,Dekho Customization options available hain kya furniture design me? actually,,0,1
+Dekho Kuch combo deal bana do jisme overall cost thoda reduce ho jaye. actually,price_negotiation,Dekho Kuch combo deal bana do jisme overall cost thoda reduce ho jaye. actually,,0,2
+"Dekho Sounds great, please schedule my slot for tomorrow morning. actually",positive_confirmation,"Dekho Sounds great, please schedule my slot for tomorrow morning. actually",,0,5
+"Bhai Main client call pe hu, call me back in 45 minutes. jaldi batao",callback_request,"Bhai Main client call pe hu, call me back in 45 minutes. jaldi batao",,0,3
+Sir Paise kat gaye account se but order confirm nahi hua abhi tak. kindly confirm,complaint,Sir Paise kat gaye account se but order confirm nahi hua abhi tak. kindly confirm,,0,0
+"Hello team, Yes that works for me, lock this pricing.",positive_confirmation,"Hello team, Yes that works for me, lock this pricing.",,0,5
+Sir Do not disturb list me daal do mera contact. kindly confirm,not_interested,Sir Do not disturb list me daal do mera contact. kindly confirm,,0,4
+Bhai Aapke competitor ka quote dekhoge to aap bhi price kam kar doge. jaldi batao,price_negotiation,Bhai Aapke competitor ka quote dekhoge to aap bhi price kam kar doge. jaldi batao,,0,2
+Bhai Main already doosre company ka broadband use kar raha hu mujhe switch nahi karna. jaldi batao,not_interested,Bhai Main already doosre company ka broadband use kar raha hu mujhe switch nahi karna. jaldi batao,,0,4
+Sir Consultation fee kitni lagegi specialist doctor se milne ki? kindly confirm,purchase_inquiry,Sir Consultation fee kitni lagegi specialist doctor se milne ki? kindly confirm,,0,1
+"Hey, Final quote kitna doge agar main 5 units ek sath buy karu?!",price_negotiation,"Hey, Final quote kitna doge agar main 5 units ek sath buy karu?!",,0,2
+Size chart provide kar sakte ho kya standard measurements ke saath?,purchase_inquiry,Size chart provide kar sakte ho kya standard measurements ke saath?,,0,1
+Dekho Warranty claim karne me itna issue kyu aa raha hai? actually,complaint,Dekho Warranty claim karne me itna issue kyu aa raha hai? actually,,0,0
+"Hey, Haanji bilkul, main offer accept karta hu.!",positive_confirmation,"Hey, Haanji bilkul, main offer accept karta hu.!",,0,5
+Arre Bulk purchase pe koi corporate discount provide karte ho kya? please,purchase_inquiry,Arre Bulk purchase pe koi corporate discount provide karte ho kya? please,,0,1
+"Hello team, Kuch combo deal bana do jisme overall cost thoda reduce ho jaye.",price_negotiation,"Hello team, Kuch combo deal bana do jisme overall cost thoda reduce ho jaye.",,0,2
+Mujhe compensation chahiye jo inconvenience create hui hai.,complaint,Mujhe compensation chahiye jo inconvenience create hui hai.,,0,0
+Arre Delivery agent ne OTP bina liye status delivered mark kar diya. please,complaint,Arre Delivery agent ne OTP bina liye status delivered mark kar diya. please,,0,0
+"Hello team, Is insurance policy ke coverage details aur terms & conditions share karo.",purchase_inquiry,"Hello team, Is insurance policy ke coverage details aur terms & conditions share karo.",,0,1
+Sir Is apartment me 3BHK flats vacant hain kya abhi? kindly confirm,purchase_inquiry,Sir Is apartment me 3BHK flats vacant hain kya abhi? kindly confirm,,0,1
+"Bhai Busy schedule hai aaj pura din, weekend pe time milega baat karne ka. jaldi batao",callback_request,"Bhai Busy schedule hai aaj pura din, weekend pe time milega baat karne ka. jaldi batao",,0,3
+"Sir Gym me hu workout kar raha hu, 1 ghante baad phone ghumana. kindly confirm",callback_request,"Sir Gym me hu workout kar raha hu, 1 ghante baad phone ghumana. kindly confirm",,0,3
+"Sir Haan plan finalize ho gaya hai, invoice raise kar do. kindly confirm",positive_confirmation,"Sir Haan plan finalize ho gaya hai, invoice raise kar do. kindly confirm",,0,5
+"Dekho Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna. actually",callback_request,"Dekho Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna. actually",,0,3
+Sunna App bar bar crash ho raha hai aur checkout fail ho raha hai....,complaint,Sunna App bar bar crash ho raha hai aur checkout fail ho raha hai.,,1,0
+"Hello team, Is product ke specifications aur pricing details share kar sakte ho?",purchase_inquiry,"Hello team, Is product ke specifications aur pricing details share kar sakte ho?",,0,1
+Sure go ahead with the policy generation.,positive_confirmation,Sure go ahead with the policy generation.,,0,5
+"Hello team, Stop harassing with promotional offers, unsubscribe me.",not_interested,"Hello team, Stop harassing with promotional offers, unsubscribe me.",,0,4
+Sir Agar main full payment cash me karu to best price kya doge? kindly confirm,price_negotiation,Sir Agar main full payment cash me karu to best price kya doge? kindly confirm,,0,2
+"Arre I am happy with my existing vendor, no interest in new proposals. please",not_interested,"Arre I am happy with my existing vendor, no interest in new proposals. please",,0,4
+"Sunna Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha....",complaint,"Sunna Mujhe manager se baat karni hai, agent problem resolve nahi kar paa raha.",,1,0
+"Sunna Important presentation start ho rahi hai, please ring after 5 PM....",callback_request,"Sunna Important presentation start ho rahi hai, please ring after 5 PM.",,1,3
+"Hey, Course syllabus aur duration ke baare me detail chahiye.!",purchase_inquiry,"Hey, Course syllabus aur duration ke baare me detail chahiye.!",,0,1
+Kya exchange offer chal raha hai puraane phone par?,purchase_inquiry,Kya exchange offer chal raha hai puraane phone par?,,0,1
+"Hello team, Theek hai pack karke dispatch karwa dijiye.",positive_confirmation,"Hello team, Theek hai pack karke dispatch karwa dijiye.",,0,5
+"Hey, Daily 10 call aate hain aapke, block list me daal raha hu number.!",not_interested,"Hey, Daily 10 call aate hain aapke, block list me daal raha hu number.!",,0,4
+"Dekho Aap note down kar lo, kal dopehar 1 baje callback fix kar lo. actually",callback_request,"Dekho Aap note down kar lo, kal dopehar 1 baje callback fix kar lo. actually",,0,3
+"Hello team, Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai.",complaint,"Hello team, Account hack ho gaya lagta hai, unauthorized transactions show kar raha hai.",,0,0
+"Sir Bhai thoda reasonable lagao, itna high price afford nahi ho payega. kindly confirm",price_negotiation,"Sir Bhai thoda reasonable lagao, itna high price afford nahi ho payega. kindly confirm",,0,2
+"Bilkul agree hu terms se, KYC verification complete kar lete hain.",positive_confirmation,"Bilkul agree hu terms se, KYC verification complete kar lete hain.",,0,5
+"Hello team, Nahi lena kuch bhi, disconnect the call.",not_interested,"Hello team, Nahi lena kuch bhi, disconnect the call.",,0,4
+"Sir Mujhe koi membership nahi chahiye, thanks for calling. kindly confirm",not_interested,"Sir Mujhe koi membership nahi chahiye, thanks for calling. kindly confirm",,0,4
+"Hello team, Kitni baar bolu nahi chahiye aapka product!",not_interested,"Hello team, Kitni baar bolu nahi chahiye aapka product!",,0,4
+"Sunna Meeting me busy hu abhi, kal subah 10 baje call karna....",callback_request,"Sunna Meeting me busy hu abhi, kal subah 10 baje call karna.",,1,3
+"Food quantity bohot kam thi price ke hisab se, fraud hai ye.",complaint,"Food quantity bohot kam thi price ke hisab se, fraud hai ye.",,0,0
+Sir Kindly delete my data from your telemarketing system. kindly confirm,not_interested,Sir Kindly delete my data from your telemarketing system. kindly confirm,,0,4
+Sunna Payment do baar deduct ho gayi single transaction ke liye....,complaint,Sunna Payment do baar deduct ho gayi single transaction ke liye.,,1,0
+"Bhai Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna. jaldi batao",callback_request,"Bhai Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna. jaldi batao",,0,3
+"Hello team, I am happy with my existing vendor, no interest in new proposals.",not_interested,"Hello team, I am happy with my existing vendor, no interest in new proposals.",,0,4
+"Arre Flight board kar raha hu, landing ke baad call back karo around 8 PM. please",callback_request,"Arre Flight board kar raha hu, landing ke baad call back karo around 8 PM. please",,0,3
+"Sunna Bhai thoda reasonable lagao, itna high price afford nahi ho payega....",price_negotiation,"Sunna Bhai thoda reasonable lagao, itna high price afford nahi ho payega.",,1,2
+"Hello team, Warranty claim karne me itna issue kyu aa raha hai?",complaint,"Hello team, Warranty claim karne me itna issue kyu aa raha hai?",,0,0
+Bhai Consultation fee kitni lagegi specialist doctor se milne ki? jaldi batao,purchase_inquiry,Bhai Consultation fee kitni lagegi specialist doctor se milne ki? jaldi batao,,0,1
+"Sir Network coverage issue hai call cut ho rahi hai, fir se dial karo. kindly confirm",callback_request,"Sir Network coverage issue hai call cut ho rahi hai, fir se dial karo. kindly confirm",,0,3
+"Hey, Yes I am ready to purchase, payment link WhatsApp kar do.!",positive_confirmation,"Hey, Yes I am ready to purchase, payment link WhatsApp kar do.!",,0,5
+"Arre Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo. please",callback_request,"Arre Signal bohot drop ho raha hai yaha, WhatsApp pe text kar do ya baad me call karo. please",,0,3
+"Agreed, main onboarding session join karne ke liye ready hu.",positive_confirmation,"Agreed, main onboarding session join karne ke liye ready hu.",,0,5
+"Hey, Aapke team lead ya manager ko bolo mujhe sham ko connect kare.!",callback_request,"Hey, Aapke team lead ya manager ko bolo mujhe sham ko connect kare.!",,0,3
+"Hey, Mera subscription bina permission ke auto-renew kaise ho gaya?!",complaint,"Hey, Mera subscription bina permission ke auto-renew kaise ho gaya?!",,0,0
+Can we schedule this discussion for tomorrow morning at 10:30 AM?,callback_request,Can we schedule this discussion for tomorrow morning at 10:30 AM?,,0,3
+Sunna Kuch combo deal bana do jisme overall cost thoda reduce ho jaye....,price_negotiation,Sunna Kuch combo deal bana do jisme overall cost thoda reduce ho jaye.,,1,2
+"Bhai Food quantity bohot kam thi price ke hisab se, fraud hai ye. jaldi batao",complaint,"Bhai Food quantity bohot kam thi price ke hisab se, fraud hai ye. jaldi batao",,0,0
+"Hey, Sure go ahead with the policy generation.!",positive_confirmation,"Hey, Sure go ahead with the policy generation.!",,0,5
+Arre Do not disturb list me daal do mera contact. please,not_interested,Arre Do not disturb list me daal do mera contact. please,,0,4
+"Bhai Approved from my side, initiate the service today itself. jaldi batao",positive_confirmation,"Bhai Approved from my side, initiate the service today itself. jaldi batao",,0,5
+"Bhai Family dinner pe hu, kal morning me reach out karna. jaldi batao",callback_request,"Bhai Family dinner pe hu, kal morning me reach out karna. jaldi batao",,0,3
+"Hey, Mujhe compensation chahiye jo inconvenience create hui hai.!",complaint,"Hey, Mujhe compensation chahiye jo inconvenience create hui hai.!",,0,0
+"Arre Haan delivery address correct hai, dispatch karwa do order. please",positive_confirmation,"Arre Haan delivery address correct hai, dispatch karwa do order. please",,0,5
+Dekho Aapke competitor ka quote dekhoge to aap bhi price kam kar doge. actually,price_negotiation,Dekho Aapke competitor ka quote dekhoge to aap bhi price kam kar doge. actually,,0,2
+"Hey, Agar advance me pay kar du pura amount to extra off milega?!",price_negotiation,"Hey, Agar advance me pay kar du pura amount to extra off milega?!",,0,2
+Sir Annual billing me extra months complimentary milenge kya? kindly confirm,price_negotiation,Sir Annual billing me extra months complimentary milenge kya? kindly confirm,,0,2
+"Bhai Bhai thoda reasonable lagao, itna high price afford nahi ho payega. jaldi batao",price_negotiation,"Bhai Bhai thoda reasonable lagao, itna high price afford nahi ho payega. jaldi batao",,0,2
+"Hey, Network connectivity issue solve nahi hua 2 weeks se.!",complaint,"Hey, Network connectivity issue solve nahi hua 2 weeks se.!",,0,0
+"Bhai No need of personal loan, I have enough funds. jaldi batao",not_interested,"Bhai No need of personal loan, I have enough funds. jaldi batao",,0,4
+Bhai Can your sales representative give me a callback tomorrow at 3 PM? jaldi batao,callback_request,Bhai Can your sales representative give me a callback tomorrow at 3 PM? jaldi batao,,0,3
+"Hello team, Annual billing me extra months complimentary milenge kya?",price_negotiation,"Hello team, Annual billing me extra months complimentary milenge kya?",,0,2
+Arre Mujhe compensation chahiye jo inconvenience create hui hai. please,complaint,Arre Mujhe compensation chahiye jo inconvenience create hui hai. please,,0,0
+"Hey, Compatibility issue to nahi aayegi Mac OS ke sath?!",purchase_inquiry,"Hey, Compatibility issue to nahi aayegi Mac OS ke sath?!",,0,1
+"Sir Haan bilkul theek hai, aap booking proceed kar dijiye. kindly confirm",positive_confirmation,"Sir Haan bilkul theek hai, aap booking proceed kar dijiye. kindly confirm",,0,5
+"Bhai Mujhe property nahi kharidni hai, wrong number pe call kiya hai. jaldi batao",not_interested,"Bhai Mujhe property nahi kharidni hai, wrong number pe call kiya hai. jaldi batao",,0,4
+"Sir Online price to isse sasta dikha raha hai, match karoge rate? kindly confirm",price_negotiation,"Sir Online price to isse sasta dikha raha hai, match karoge rate? kindly confirm",,0,2
+"Bhai Please apna promotion band karo, mujhe koi requirement nahi hai. jaldi batao",not_interested,"Bhai Please apna promotion band karo, mujhe koi requirement nahi hai. jaldi batao",,0,4
+"Dekho Sure, main online advance token amount transfer kar raha hu abhi. actually",positive_confirmation,"Dekho Sure, main online advance token amount transfer kar raha hu abhi. actually",,0,5
+Dekho Can your sales representative give me a callback tomorrow at 3 PM? actually,callback_request,Dekho Can your sales representative give me a callback tomorrow at 3 PM? actually,,0,3
+"Hey, Bulk purchase pe koi corporate discount provide karte ho kya?!",purchase_inquiry,"Hey, Bulk purchase pe koi corporate discount provide karte ho kya?!",,0,1
+Kuch discount do tabhi booking advance transfer karunga.,price_negotiation,Kuch discount do tabhi booking advance transfer karunga.,,0,2
+"Dekho Pichli baar to mujhe 15% off mila tha, is baar bhi wahi price kar do. actually",price_negotiation,"Dekho Pichli baar to mujhe 15% off mila tha, is baar bhi wahi price kar do. actually",,0,2
+Sir Main retired person hu mere kaam ka nahi hai ye. kindly confirm,not_interested,Sir Main retired person hu mere kaam ka nahi hai ye. kindly confirm,,0,4
+Sunna Kya is package me installation and demo free of cost hai?...,purchase_inquiry,Sunna Kya is package me installation and demo free of cost hai?.,,1,1
+"Hey, Gym me hu workout kar raha hu, 1 ghante baad phone ghumana.!",callback_request,"Hey, Gym me hu workout kar raha hu, 1 ghante baad phone ghumana.!",,0,3
+"Hello team, Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again.",not_interested,"Hello team, Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again.",,0,4
+Sir Can we schedule this discussion for tomorrow morning at 10:30 AM? kindly confirm,callback_request,Sir Can we schedule this discussion for tomorrow morning at 10:30 AM? kindly confirm,,0,3
+"Hello team, Online payment ke alawa Cash on Delivery ka option hai kya?",purchase_inquiry,"Hello team, Online payment ke alawa Cash on Delivery ka option hai kya?",,0,1
+"Hello team, Size chart provide kar sakte ho kya standard measurements ke saath?",purchase_inquiry,"Hello team, Size chart provide kar sakte ho kya standard measurements ke saath?",,0,1
+"Sunna Theek hai mujhe ye deal pasand aayi, lock kar dijiye....",positive_confirmation,"Sunna Theek hai mujhe ye deal pasand aayi, lock kar dijiye.",,1,5
+Sunna Aapke team lead ya manager ko bolo mujhe sham ko connect kare....,callback_request,Sunna Aapke team lead ya manager ko bolo mujhe sham ko connect kare.,,1,3
+"Dekho Confirmed hai sir, delivery time slot 2 PM to 4 PM rakhna. actually",positive_confirmation,"Dekho Confirmed hai sir, delivery time slot 2 PM to 4 PM rakhna. actually",,0,5
+"Arre Bill me extra charges add kar diye bina bataye, resolve it immediately. please",complaint,"Arre Bill me extra charges add kar diye bina bataye, resolve it immediately. please",,0,0
+"Haan bilkul theek hai, aap booking proceed kar dijiye.",positive_confirmation,"Haan bilkul theek hai, aap booking proceed kar dijiye.",,0,5
+"Bhai Court hearing me hu, can not speak right now call later. jaldi batao",callback_request,"Bhai Court hearing me hu, can not speak right now call later. jaldi batao",,0,3
+Arre Shipping fee free kar do to order place karta hu turant. please,price_negotiation,Arre Shipping fee free kar do to order place karta hu turant. please,,0,2
+"Sir Sure, main online advance token amount transfer kar raha hu abhi. kindly confirm",positive_confirmation,"Sir Sure, main online advance token amount transfer kar raha hu abhi. kindly confirm",,0,5
+"Arre Abhi main drive kar raha hu, can you please call me back around 6 PM? please",callback_request,"Arre Abhi main drive kar raha hu, can you please call me back around 6 PM? please",,0,3

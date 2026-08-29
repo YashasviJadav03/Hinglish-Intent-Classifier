@@ -60,7 +60,10 @@ def get_model_and_tokenizer():
             label2id=config.LABEL2ID,
         )
         MODEL = PeftModel.from_pretrained(base_model, str(adapter_path))
-        TOKENIZER = AutoTokenizer.from_pretrained(str(adapter_path) if (adapter_path / "vocab.txt").exists() else base_model_name)
+        TOKENIZER = AutoTokenizer.from_pretrained(
+            str(adapter_path) if (adapter_path / "tokenizer.json").exists() or (adapter_path / "vocab.txt").exists()
+            else base_model_name
+        )
     else:
         logger.warning("LoRA adapter directory empty. Loading base multilingual transformer: %s", base_model_name)
         MODEL = AutoModelForSequenceClassification.from_pretrained(

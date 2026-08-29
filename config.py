@@ -3,6 +3,7 @@ Configuration settings, directory paths, and default hyperparameters
 for the Hinglish Intent Classifier.
 """
 
+import os
 from pathlib import Path
 from typing import Dict, List
 
@@ -88,6 +89,6 @@ DEFAULT_LORA_PARAMS = {
 # API Service Configurations
 # ==========================================
 API_HOST = "0.0.0.0"
-API_PORT = 8000
+API_PORT = int(os.environ.get("PORT", 7860))  # HF Spaces uses 7860
 API_TITLE = "Hinglish Voice-Agent Intent Classification API"
 API_VERSION = "1.0.0"

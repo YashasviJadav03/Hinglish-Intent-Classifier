@@ -39,15 +39,19 @@ env/
 *.swp
 *.swo
 
-# Large Model weights and raw data caches (allow .gitkeep)
+# Large Model weights and raw data caches
+# Keep the best LoRA adapter (small ~3.5MB) for deployment
 models/*
-!models/.gitkeep
 !models/lora-adapter/
-!models/lora-adapter/.gitkeep
+models/lora-adapter/lora_r*/
+models/lora-adapter/phase3*/
+
+# Raw data (regeneratable)
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
+
+# Keep processed data (small CSVs needed at inference time for label mappings)
+!data/processed/
 
 # Results / Artifacts (keep structure, ignore large temp artifacts)
 results/runs/
