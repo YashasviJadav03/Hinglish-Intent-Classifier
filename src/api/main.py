@@ -41,23 +41,33 @@ DEVICE = None
 def get_model_and_tokenizer():
     """
     Loads base model and attaches the fine-tuned LoRA adapter if not already in memory.
+    Optimized for low-memory container environments (<512MB RAM).
     """
     global MODEL, TOKENIZER, DEVICE
     if MODEL is not None and TOKENIZER is not None:
         return MODEL, TOKENIZER, DEVICE
 
-    logger.info("Loading model and tokenizer...")
+    import gc
+    torch.set_num_threads(1)
+
+    logger.info("Loading model and tokenizer with memory optimization...")
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     base_model_name = config.DEFAULT_MODEL_NAME
     adapter_path = config.LORA_ADAPTER_DIR
 
-    if adapter_path.exists() and any(adapter_path.iterdir()):
-        logger.info("Loading fine-tuned LoRA adapter from %s", adapter_path)
+    adapter_exists = (
+        adapter_path.exists()
+        and (adapter_path / "adapter_config.json").exists()
+    )
+
+    if adapter_exists:
+        logger.info("Loading fine-tuned LoRA adapter from local path %s", adapter_path)
         base_model = AutoModelForSequenceClassification.from_pretrained(
             base_model_name,
             num_labels=config.NUM_LABELS,
             id2label=config.ID2LABEL,
             label2id=config.LABEL2ID,
+            low_cpu_mem_usage=True,
         )
         MODEL = PeftModel.from_pretrained(base_model, str(adapter_path))
         TOKENIZER = AutoTokenizer.from_pretrained(
@@ -65,17 +75,25 @@ def get_model_and_tokenizer():
             else base_model_name
         )
     else:
-        logger.warning("LoRA adapter directory empty. Loading base multilingual transformer: %s", base_model_name)
-        MODEL = AutoModelForSequenceClassification.from_pretrained(
+        logger.info("Loading fine-tuned LoRA adapter directly from Hugging Face Hub: yashasvijadav03/hinglish-intent-classifier")
+        base_model = AutoModelForSequenceClassification.from_pretrained(
             base_model_name,
             num_labels=config.NUM_LABELS,
             id2label=config.ID2LABEL,
             label2id=config.LABEL2ID,
+            low_cpu_mem_usage=True,
         )
-        TOKENIZER = AutoTokenizer.from_pretrained(base_model_name)
+        try:
+            MODEL = PeftModel.from_pretrained(base_model, "yashasvijadav03/hinglish-intent-classifier")
+            TOKENIZER = AutoTokenizer.from_pretrained("yashasvijadav03/hinglish-intent-classifier")
+        except Exception as e:
+            logger.warning(f"Could not load adapter from Hub: {e}. Falling back to base model.")
+            MODEL = base_model
+            TOKENIZER = AutoTokenizer.from_pretrained(base_model_name)
 
     MODEL.to(DEVICE)
     MODEL.eval()
+    gc.collect()
     logger.info("Model ready for inference!")
     return MODEL, TOKENIZER, DEVICE
 
