@@ -1,11 +1,13 @@
 # Production-Ready Low-Memory Dockerfile for Hinglish Intent Classifier API
 FROM python:3.10-slim
 
-# Set environment variables for minimal memory footprint
+# Set environment variables for minimal memory footprint and pre-cached Hugging Face directory
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     OMP_NUM_THREADS=1 \
     MKL_NUM_THREADS=1 \
+    HF_HOME=/app/.cache/huggingface \
+    TRANSFORMERS_CACHE=/app/.cache/huggingface \
     PORT=8000
 
 # Set working directory
@@ -27,8 +29,13 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 
 # Copy requirements and install remaining packages
 COPY requirements.txt .
-# Filter out torch from requirements.txt to keep CPU-only build
 RUN pip install --no-cache-dir transformers peft fastapi "uvicorn[standard]" pydantic scikit-learn pandas numpy
+
+# PRE-DOWNLOAD AND CACHE the base transformer weights at Docker BUILD time
+# (Build environment has ample RAM, preventing runtime OOM spikes during boot)
+RUN python -c "from transformers import AutoTokenizer, AutoModelForSequenceClassification; \
+    AutoTokenizer.from_pretrained('distilbert-base-multilingual-cased'); \
+    AutoModelForSequenceClassification.from_pretrained('distilbert-base-multilingual-cased')"
 
 # Copy source code and artifacts
 COPY config.py .
@@ -42,7 +49,7 @@ COPY models/lora-adapter/adapter_model.safetensors models/lora-adapter/
 COPY models/lora-adapter/tokenizer.json models/lora-adapter/
 COPY models/lora-adapter/tokenizer_config.json models/lora-adapter/
 
-# Set ownership to non-root user
+# Set ownership to non-root user (including the cached model files)
 RUN chown -R appuser:appuser /app
 
 # Switch to non-root user

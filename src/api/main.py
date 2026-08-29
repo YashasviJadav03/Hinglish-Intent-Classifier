@@ -49,9 +49,10 @@ def get_model_and_tokenizer():
 
     import gc
     torch.set_num_threads(1)
+    torch.set_grad_enabled(False)
 
     logger.info("Loading model and tokenizer with memory optimization...")
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    DEVICE = torch.device("cpu")
     base_model_name = config.DEFAULT_MODEL_NAME
     adapter_path = config.LORA_ADAPTER_DIR
 
