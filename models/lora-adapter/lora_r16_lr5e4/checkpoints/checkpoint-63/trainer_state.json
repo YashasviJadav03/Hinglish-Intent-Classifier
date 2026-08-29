@@ -1,0 +1,88 @@
+{
+  "best_global_step": 63,
+  "best_metric": 0.8106,
+  "best_model_checkpoint": "D:\\Hinglish-Intent-Classifier\\models\\lora-adapter\\lora_r16_lr5e4\\checkpoints\\checkpoint-63",
+  "epoch": 1.0,
+  "eval_steps": 500,
+  "global_step": 63,
+  "is_hyper_param_search": false,
+  "is_local_process_zero": true,
+  "is_world_process_zero": true,
+  "log_history": [
+    {
+      "epoch": 0.15873015873015872,
+      "grad_norm": 1.2524868249893188,
+      "learning_rate": 0.00048214285714285715,
+      "loss": 1.7746570587158204,
+      "step": 10
+    },
+    {
+      "epoch": 0.31746031746031744,
+      "grad_norm": 2.623178720474243,
+      "learning_rate": 0.00046230158730158733,
+      "loss": 1.7336175918579102,
+      "step": 20
+    },
+    {
+      "epoch": 0.47619047619047616,
+      "grad_norm": 2.895895004272461,
+      "learning_rate": 0.00044246031746031746,
+      "loss": 1.4585336685180663,
+      "step": 30
+    },
+    {
+      "epoch": 0.6349206349206349,
+      "grad_norm": 3.9988045692443848,
+      "learning_rate": 0.00042261904761904765,
+      "loss": 1.1750070571899414,
+      "step": 40
+    },
+    {
+      "epoch": 0.7936507936507936,
+      "grad_norm": 3.210036039352417,
+      "learning_rate": 0.0004027777777777778,
+      "loss": 0.9828864097595215,
+      "step": 50
+    },
+    {
+      "epoch": 0.9523809523809523,
+      "grad_norm": 5.291703701019287,
+      "learning_rate": 0.00038293650793650797,
+      "loss": 0.8508740425109863,
+      "step": 60
+    },
+    {
+      "epoch": 1.0,
+      "eval_accuracy": 0.8102,
+      "eval_loss": 0.6121116280555725,
+      "eval_macro_f1": 0.8106,
+      "eval_macro_precision": 0.8326,
+      "eval_macro_recall": 0.8102,
+      "eval_runtime": 3.2904,
+      "eval_samples_per_second": 65.646,
+      "eval_steps_per_second": 2.127,
+      "step": 63
+    }
+  ],
+  "logging_steps": 10,
+  "max_steps": 252,
+  "num_input_tokens_seen": 0,
+  "num_train_epochs": 4,
+  "save_steps": 500,
+  "stateful_callbacks": {
+    "TrainerControl": {
+      "args": {
+        "should_epoch_stop": false,
+        "should_evaluate": false,
+        "should_log": false,
+        "should_save": true,
+        "should_training_stop": false
+      },
+      "attributes": {}
+    }
+  },
+  "total_flos": 7521128040960.0,
+  "train_batch_size": 16,
+  "trial_name": null,
+  "trial_params": null
+}
