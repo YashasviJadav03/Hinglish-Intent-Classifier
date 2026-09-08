@@ -48,8 +48,8 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
   <main class="main-wrapper">
+    <!-- Hero Section -->
     <section class="hero-section">
       <div class="system-status-pill">
         <span class="status-dot"></span>
@@ -59,11 +59,39 @@
         Code-Mixed <span class="gradient-text">Hinglish Intent</span> Intelligence
       </h1>
       <p class="hero-subtitle">
-        Fine-tuned multilingual transformer (DistilBERT + LoRA PEFT) built for real-time natural language understanding inside conversational sales voice agents.
+        Fine-tuned multilingual transformer (DistilBERT + LoRA PEFT) for real-time voice-agent intent classification with zero-leakage validation and confidence fallback safeguards.
       </p>
     </section>
 
-    <!-- Main Grid -->
+    <!-- Stats Row -->
+    <section class="stats-row" id="stats-row">
+      <div class="stat-item">
+        <span class="stat-number" data-target="840">0</span>
+        <span class="stat-label">Base Utterances</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="5076">0</span>
+        <span class="stat-label">Total Samples</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="6">0</span>
+        <span class="stat-label">Intent Classes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="88.9" data-suffix="%">0</span>
+        <span class="stat-label">In-Domain F1</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="78.3" data-suffix="%">0</span>
+        <span class="stat-label">OOD F1</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="35" data-suffix="ms">0</span>
+        <span class="stat-label">CPU Latency</span>
+      </div>
+    </section>
+
+    <!-- Main Classifier Grid -->
     <div class="app-grid">
       <!-- Input Column -->
       <div class="glass-card input-card">
@@ -80,7 +108,6 @@
           </button>
         </div>
 
-        <!-- Textarea with Live Waveform Simulation -->
         <div class="input-container">
           <textarea 
             id="utterance-input" 
@@ -119,25 +146,22 @@
           </div>
           <div class="sample-pills" id="sample-pills-container">
             <button class="pill-btn active" data-text="Thoda discount de do na, price bohot zyada hai.">
-              🏷️ Discount / Price
+              🏷️ Price Negotiation
             </button>
             <button class="pill-btn" data-text="Mera product abhi tak deliver nahi hua, refund chahiye!">
-              ⚠️ Complaint / Issue
+              ⚠️ Complaint
             </button>
             <button class="pill-btn" data-text="Haanji done samjho, payment link share kar dijiye.">
-              ✅ Positive Confirmation
+              ✅ Confirmation
             </button>
             <button class="pill-btn" data-text="Abhi driving kar raha hoon, baad me phone karna.">
-              📞 Callback Later
+              📞 Callback
             </button>
             <button class="pill-btn" data-text="Mujhe ye product bilkul nahi chahiye, do not call me.">
               🚫 Not Interested
             </button>
             <button class="pill-btn" data-text="Bhaiya is plan ke features aur warranty explain kardo.">
               🔍 Purchase Inquiry
-            </button>
-            <button class="pill-btn" data-text="bhai 6 din se order ruka hua h koi btao kb aayga?">
-              🎙️ ASR Slang / Typo
             </button>
           </div>
         </div>
@@ -222,6 +246,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Batch Demo Section -->
+    <section class="batch-demo-section" id="batch-demo-section">
+      <div class="section-header-row">
+        <div>
+          <h2 class="section-title-left">Batch Intent Classification Demo</h2>
+          <p class="section-desc">Fire all 6 intent classes simultaneously via <code>/classify/batch</code> endpoint</p>
+        </div>
+        <button class="primary-btn batch-btn" id="batch-demo-btn">
+          <span class="btn-text">🚀 Run Batch Demo</span>
+          <div class="spinner" id="batch-spinner"></div>
+        </button>
+      </div>
+      <div class="batch-grid" id="batch-grid">
+        <!-- Filled dynamically -->
+      </div>
+    </section>
 
     <!-- Benchmarks & Architecture Showcase -->
     <section class="benchmarks-section">

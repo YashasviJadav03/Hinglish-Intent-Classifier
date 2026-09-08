@@ -205,7 +205,7 @@ body {
 /* Hero Section */
 .hero-section {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .system-status-pill {
@@ -245,11 +245,77 @@ body {
 }
 
 .hero-subtitle {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
-  max-width: 680px;
+  max-width: 700px;
   margin: 0 auto;
   font-weight: 400;
+}
+
+/* ==========================================================================
+   Stats Row
+   ========================================================================== */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 860px) {
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.stat-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stat-item:hover {
+  border-color: rgba(0, 242, 254, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.1);
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-mono);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  margin-top: 4px;
 }
 
 /* App Grid */
@@ -455,7 +521,6 @@ textarea {
 
 /* Primary Action Button */
 .primary-btn {
-  width: 100%;
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
   border: none;
   color: #050b14;
@@ -708,6 +773,174 @@ textarea {
   word-break: break-all;
 }
 
+/* ==========================================================================
+   Batch Demo Section
+   ========================================================================== */
+
+.batch-demo-section {
+  margin-bottom: 56px;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.section-title-left {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.section-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.section-desc code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-cyan);
+}
+
+.batch-btn {
+  width: auto;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.batch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 860px) {
+  .batch-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .batch-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.batch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.batch-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.batch-card:hover {
+  border-color: rgba(0, 242, 254, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.08);
+}
+
+.batch-card.fallback-card {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.batch-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.batch-intent-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  color: var(--accent-cyan);
+}
+
+.batch-intent-tag.uncertain {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--accent-amber);
+}
+
+.batch-confidence {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+}
+
+.batch-confidence.low {
+  color: var(--accent-amber);
+}
+
+.batch-utterance {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  font-style: italic;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  padding-left: 12px;
+  margin-bottom: 10px;
+}
+
+.batch-action {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.batch-secondary {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--accent-blue);
+  opacity: 0.8;
+}
+
+/* Placeholder grid before batch runs */
+.batch-placeholder {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.batch-placeholder-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
+  opacity: 0.5;
+}
+
 /* Benchmarks Section */
 .benchmarks-section {
   margin-top: 20px;
@@ -741,6 +974,12 @@ textarea {
   position: relative;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.bench-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .bench-card.featured {
@@ -918,4 +1157,20 @@ textarea {
   border: 1px solid rgba(79, 172, 254, 0.25);
   border-radius: var(--radius-full);
   color: var(--accent-blue);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  .nav-links {
+    gap: 8px;
+  }
+  .nav-link {
+    display: none;
+  }
 }
