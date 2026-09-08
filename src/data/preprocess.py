@@ -6,16 +6,17 @@ Preprocesses code-mixed Hinglish conversational data:
 2. Extracts emojis and excessive punctuation into explicit metadata features
 3. Cleans whitespace, casing, and control characters
 4. Deduplicates rows and drops empty/near-empty utterances
-5. Performs stratified 70/15/15 train/val/test split
-6. Saves outputs to data/processed/train.csv, val.csv, test.csv
-7. Prints detailed class balance and summary metrics
+5. Performs Group-Based Stratified Split on base_ids BEFORE any data augmentation
+6. Augments ONLY the training partition (val and test remain clean, un-augmented base utterances)
+7. Validates zero lexical/semantic leakage across train, val, and test splits with automated assertions
+8. Saves outputs to data/processed/train.csv, val.csv, test.csv
 """
 
 import re
 import sys
 import logging
 from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple, Optional
 
 import pandas as pd
 import numpy as np
@@ -45,6 +46,18 @@ EMOJI_PATTERN = re.compile(
 
 PUNCT_EXCESS_PATTERN = re.compile(r"([!?.,;:\-\_])\1{1,}")
 CHAR_ELONGATION_PATTERN = re.compile(r"(.)\1{2,}")  # 3 or more repeated chars -> compress to 2
+
+# Standard conversational variations used ONLY during training data augmentation
+DEFAULT_TRAIN_VARIATIONS = [
+    ("", ""),
+    ("Arre ", " please"),
+    ("Hey, ", "!"),
+    ("Bhai ", " jaldi batao"),
+    ("Sir ", " kindly confirm"),
+    ("Sunna ", "..."),
+    ("Dekho ", " actually"),
+    ("Hello team, ", ""),
+]
 
 
 def extract_metadata_and_clean(text: str) -> Tuple[str, str, int]:
@@ -80,15 +93,19 @@ def extract_metadata_and_clean(text: str) -> Tuple[str, str, int]:
 def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Applies text cleaning, feature extraction, deduplication, and filtering.
+    Preserves or assigns base_id for group-based split integrity.
     """
     logger.info("Raw input records: %d", len(df))
 
-    # Ensure required columns
     if "text" not in df.columns or "intent" not in df.columns:
         raise ValueError("Input DataFrame must contain 'text' and 'intent' columns.")
 
     # Filter out unknown/invalid labels
     df = df[df["intent"].isin(config.INTENT_LABELS)].copy()
+
+    # Ensure base_id exists
+    if "base_id" not in df.columns:
+        df["base_id"] = [f"{intent}_{i:03d}" for i, intent in enumerate(df["intent"])]
 
     # Apply cleaning & feature extraction
     results = [extract_metadata_and_clean(t) for t in df["text"]]
@@ -99,11 +116,11 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     # Map intent to label_id
     df["label"] = df["intent"].map(config.LABEL2ID)
 
-    # Filter out near-empty text (< 3 characters or < 2 words)
+    # Filter out near-empty text (< 3 characters or < 1 word)
     df = df[df["clean_text"].str.len() >= 3]
     df = df[df["clean_text"].apply(lambda x: len(x.split()) >= 1)]
 
-    # Deduplicate on clean_text
+    # Deduplicate on clean_text and intent
     before_dedup = len(df)
     df = df.drop_duplicates(subset=["clean_text", "intent"]).reset_index(drop=True)
     logger.info("Deduplication: dropped %d duplicate records. Retained: %d", before_dedup - len(df), len(df))
@@ -111,41 +128,142 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def split_dataset(
-    df: pd.DataFrame, train_ratio: float = 0.70, val_ratio: float = 0.15, test_ratio: float = 0.15, seed: int = 42
+def split_dataset_by_base_id(
+    df: pd.DataFrame,
+    train_ratio: float = 0.70,
+    val_ratio: float = 0.15,
+    test_ratio: float = 0.15,
+    seed: int = 42,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    Performs stratified train/val/test split based on intent label.
+    Performs Group-Based Stratified Split on base_id so that zero base utterances
+    or their variations ever cross train, validation, or test partition boundaries.
     """
     assert abs((train_ratio + val_ratio + test_ratio) - 1.0) < 1e-5, "Split ratios must sum to 1.0"
 
-    # Step 1: Split into train and temp (val + test)
+    # Get unique base items with their intent label
+    base_df = df.drop_duplicates(subset=["base_id"]).copy()
+
+    # Step 1: Split base_ids into train and temp (val + test)
     temp_ratio = val_ratio + test_ratio
-    train_df, temp_df = train_test_split(
-        df, test_size=temp_ratio, random_state=seed, stratify=df["intent"]
+    train_base_df, temp_base_df = train_test_split(
+        base_df, test_size=temp_ratio, random_state=seed, stratify=base_df["intent"]
     )
 
     # Step 2: Split temp into val and test
     relative_test_ratio = test_ratio / temp_ratio
-    val_df, test_df = train_test_split(
-        temp_df, test_size=relative_test_ratio, random_state=seed, stratify=temp_df["intent"]
+    val_base_df, test_base_df = train_test_split(
+        temp_base_df, test_size=relative_test_ratio, random_state=seed, stratify=temp_base_df["intent"]
     )
 
-    return train_df.reset_index(drop=True), val_df.reset_index(drop=True), test_df.reset_index(drop=True)
+    train_base_ids = set(train_base_df["base_id"])
+    val_base_ids = set(val_base_df["base_id"])
+    test_base_ids = set(test_base_df["base_id"])
+
+    # Map back to full records
+    train_df = df[df["base_id"].isin(train_base_ids)].copy().reset_index(drop=True)
+    val_df = df[df["base_id"].isin(val_base_ids)].copy().reset_index(drop=True)
+    test_df = df[df["base_id"].isin(test_base_ids)].copy().reset_index(drop=True)
+
+    return train_df, val_df, test_df
+
+
+def augment_training_data(
+    train_df: pd.DataFrame, variations: Optional[List[Tuple[str, str]]] = None
+) -> pd.DataFrame:
+    """
+    Applies synthetic linguistic variations exclusively to the training dataset.
+    Validation and test datasets MUST NOT be passed through this function.
+    """
+    if variations is None:
+        variations = DEFAULT_TRAIN_VARIATIONS
+
+    augmented_records = []
+    for _, row in train_df.iterrows():
+        base_id = row["base_id"]
+        base_text = row["text"]
+        intent = row["intent"]
+
+        for prefix, suffix in variations:
+            aug_text = f"{prefix}{base_text}{suffix}".strip()
+            clean_text, emojis, excess_punct = extract_metadata_and_clean(aug_text)
+
+            augmented_records.append({
+                "base_id": base_id,
+                "text": aug_text,
+                "intent": intent,
+                "clean_text": clean_text,
+                "emojis": emojis,
+                "excess_punct_count": excess_punct,
+                "label": config.LABEL2ID[intent],
+            })
+
+    aug_df = pd.DataFrame(augmented_records)
+    aug_df = aug_df.drop_duplicates(subset=["clean_text", "intent"]).reset_index(drop=True)
+    logger.info("Training augmentation expanded %d base rows to %d training samples.", len(train_df), len(aug_df))
+    return aug_df
+
+
+def verify_split_leakage(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame) -> bool:
+    """
+    Performs strict automated validation assertions ensuring 0% data leakage
+    across train, validation, and test splits.
+    """
+    train_base_ids = set(train_df["base_id"])
+    val_base_ids = set(val_df["base_id"])
+    test_base_ids = set(test_df["base_id"])
+
+    # 1. Base ID overlap assertions
+    train_val_id_leakage = train_base_ids.intersection(val_base_ids)
+    train_test_id_leakage = train_base_ids.intersection(test_base_ids)
+    val_test_id_leakage = val_base_ids.intersection(test_base_ids)
+
+    if train_test_id_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Train and Test share base_ids: {train_test_id_leakage}")
+    if train_val_id_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Train and Val share base_ids: {train_val_id_leakage}")
+    if val_test_id_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Val and Test share base_ids: {val_test_id_leakage}")
+
+    # 2. Exact cleaned text overlap assertions
+    train_clean_texts = set(train_df["clean_text"])
+    val_clean_texts = set(val_df["clean_text"])
+    test_clean_texts = set(test_df["clean_text"])
+
+    train_test_text_leakage = train_clean_texts.intersection(test_clean_texts)
+    train_val_text_leakage = train_clean_texts.intersection(val_clean_texts)
+    val_test_text_leakage = val_clean_texts.intersection(test_clean_texts)
+
+    if train_test_text_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Train and Test share exact clean_text: {train_test_text_leakage}")
+    if train_val_text_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Train and Val share exact clean_text: {train_val_text_leakage}")
+    if val_test_text_leakage:
+        raise ValueError(f"CRITICAL LEAKAGE: Val and Test share exact clean_text: {val_test_text_leakage}")
+
+    logger.info("Leakage verification PASSED: 0 overlapping base IDs or exact utterances across splits.")
+    return True
 
 
 def print_class_balance_report(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame):
     """
     Logs comprehensive dataset summary and class distribution report.
     """
-    print("\n" + "=" * 65)
-    print("           DATASET CLASS DISTRIBUTION REPORT")
-    print("=" * 65)
-    print(f"Total Dataset Size: {len(train_df) + len(val_df) + len(test_df)}")
-    print(f"  • Train Set: {len(train_df)} ({len(train_df)/(len(train_df)+len(val_df)+len(test_df))*100:.1f}%)")
-    print(f"  • Val Set:   {len(val_df)} ({len(val_df)/(len(train_df)+len(val_df)+len(test_df))*100:.1f}%)")
-    print(f"  • Test Set:  {len(test_df)} ({len(test_df)/(len(train_df)+len(val_df)+len(test_df))*100:.1f}%)")
-    print("-" * 65)
+    total_samples = len(train_df) + len(val_df) + len(test_df)
+    unique_train_bases = train_df["base_id"].nunique()
+    unique_val_bases = val_df["base_id"].nunique()
+    unique_test_bases = test_df["base_id"].nunique()
+    total_unique_bases = unique_train_bases + unique_val_bases + unique_test_bases
+
+    print("\n" + "=" * 70)
+    print("           DATASET CLASS DISTRIBUTION & INTEGRITY REPORT")
+    print("=" * 70)
+    print(f"Total Unique Base Utterances: {total_unique_bases}")
+    print(f"  • Train Base Seeds: {unique_train_bases} ({unique_train_bases/total_unique_bases*100:.1f}%) -> Augmented: {len(train_df)} samples")
+    print(f"  • Val Base Seeds:   {unique_val_bases} ({unique_val_bases/total_unique_bases*100:.1f}%) -> Un-augmented: {len(val_df)} samples")
+    print(f"  • Test Base Seeds:  {unique_test_bases} ({unique_test_bases/total_unique_bases*100:.1f}%) -> Un-augmented: {len(test_df)} samples")
+    print(f"Total Samples (Train + Val + Test): {total_samples}")
+    print("-" * 70)
 
     summary_data = []
     for label in config.INTENT_LABELS:
@@ -155,19 +273,20 @@ def print_class_balance_report(train_df: pd.DataFrame, val_df: pd.DataFrame, tes
         total = tr_cnt + vl_cnt + ts_cnt
         summary_data.append({
             "Intent Label": label,
-            "Train": tr_cnt,
-            "Val": vl_cnt,
-            "Test": ts_cnt,
+            "Train (Aug)": tr_cnt,
+            "Val (Clean)": vl_cnt,
+            "Test (Clean)": ts_cnt,
             "Total": total,
             "Train %": f"{tr_cnt/len(train_df)*100:.1f}%",
         })
 
     summary_df = pd.DataFrame(summary_data)
     print(summary_df.to_string(index=False))
-    print("=" * 65 + "\n")
+    print("=" * 70 + "\n")
 
 
 def main():
+    config.RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
     raw_path = config.RAW_DATA_DIR / "raw_dataset.csv"
     if not raw_path.exists():
         logger.info("Raw dataset not found at %s. Running load_dataset first...", raw_path)
@@ -177,29 +296,35 @@ def main():
     logger.info("Loading raw dataset from %s", raw_path)
     raw_df = pd.read_csv(raw_path)
 
-    # Preprocess
-    cleaned_df = preprocess_dataframe(raw_df)
+    # 1. Clean and deduplicate base dataset
+    cleaned_base_df = preprocess_dataframe(raw_df)
 
-    # Split 70 / 15 / 15
-    train_df, val_df, test_df = split_dataset(
-        cleaned_df,
+    # 2. Group-Based Stratified Split on base utterances BEFORE augmentation
+    train_base_df, val_df, test_df = split_dataset_by_base_id(
+        cleaned_base_df,
         train_ratio=0.70,
         val_ratio=0.15,
         test_ratio=0.15,
         seed=config.SEED
     )
 
-    # Save to data/processed/
+    # 3. Augment ONLY the training split
+    train_df = augment_training_data(train_base_df)
+
+    # 4. Rigorous automated leakage verification
+    verify_split_leakage(train_df, val_df, test_df)
+
+    # 5. Save processed splits to data/processed/
     config.PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     train_df.to_csv(config.TRAIN_DATA_PATH, index=False, encoding="utf-8")
     val_df.to_csv(config.VAL_DATA_PATH, index=False, encoding="utf-8")
     test_df.to_csv(config.TEST_DATA_PATH, index=False, encoding="utf-8")
 
-    logger.info("Saved train.csv -> %s", config.TRAIN_DATA_PATH)
-    logger.info("Saved val.csv   -> %s", config.VAL_DATA_PATH)
-    logger.info("Saved test.csv  -> %s", config.TEST_DATA_PATH)
+    logger.info("Saved train.csv (Augmented) -> %s", config.TRAIN_DATA_PATH)
+    logger.info("Saved val.csv   (Clean)     -> %s", config.VAL_DATA_PATH)
+    logger.info("Saved test.csv  (Clean)     -> %s", config.TEST_DATA_PATH)
 
-    # Print distribution
+    # 6. Print class distribution and integrity summary
     print_class_balance_report(train_df, val_df, test_df)
 
 

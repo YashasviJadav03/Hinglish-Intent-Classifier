@@ -1,14 +1,15 @@
 """
 src/data/load_dataset.py
 
-Downloads code-mixed Hindi-English (Hinglish) text classification dataset
-from Hugging Face datasets hub or curated conversational Hinglish voice-agent benchmarks,
-maps labels to canonical voice-agent NLU intents, and saves the raw data to data/raw/raw_dataset.csv.
+Acquires and curates code-mixed Hindi-English (Hinglish) text classification dataset
+for voice-agent NLU pipelines (sales, support, lead qualification, scheduling).
+Saves raw, un-augmented base utterances to data/raw/raw_dataset.csv with unique base_ids.
 """
 
 import sys
 import logging
 from pathlib import Path
+from typing import List, Tuple
 import pandas as pd
 
 # Add project root to sys.path
@@ -23,13 +24,14 @@ logger = logging.getLogger(__name__)
 
 def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
     """
-    Generates a rich, realistic conversational Hinglish dataset tailored for
-    voice-agent NLU pipelines (sales, support, lead qualification, scheduling),
-    covering diverse phonetic transliterations, conversational noise, and dialect variations.
+    Generates a rich, realistic base conversational Hinglish dataset tailored for
+    voice-agent NLU pipelines, covering diverse phonetic transliterations and intents.
+    Returns a DataFrame of raw base utterances with unique base_ids without artificial
+    prefix/suffix augmentation leakage.
     """
-    data = [
+    raw_intent_utterances: List[Tuple[str, str]] = [
         # ==========================================
-        # 1. complaint
+        # 1. complaint (30 base seed utterances)
         # ==========================================
         ("Mera order abhi tak deliver nahi hua hai, it's been 5 days!", "complaint"),
         ("Aapki service bohot bekar hai, refund kab milega mera?", "complaint"),
@@ -63,7 +65,7 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Mujhe compensation chahiye jo inconvenience create hui hai.", "complaint"),
 
         # ==========================================
-        # 2. purchase_inquiry
+        # 2. purchase_inquiry (30 base seed utterances)
         # ==========================================
         ("Is product ke specifications aur pricing details share kar sakte ho?", "purchase_inquiry"),
         ("Kya ye model black color me available hai stock me?", "purchase_inquiry"),
@@ -97,7 +99,7 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Kya enterprise tier me 24/7 dedicated support manager milega?", "purchase_inquiry"),
 
         # ==========================================
-        # 3. price_negotiation
+        # 3. price_negotiation (30 base seed utterances)
         # ==========================================
         ("Thoda discount de do na, price thoda zyada lag raha hai.", "price_negotiation"),
         ("Agar main full payment cash me karu to best price kya doge?", "price_negotiation"),
@@ -131,7 +133,7 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Best bargain price do jisme dono side agree ho sake.", "price_negotiation"),
 
         # ==========================================
-        # 4. callback_request
+        # 4. callback_request (30 base seed utterances)
         # ==========================================
         ("Abhi main drive kar raha hu, can you please call me back around 6 PM?", "callback_request"),
         ("Meeting me busy hu abhi, kal subah 10 baje call karna.", "callback_request"),
@@ -165,7 +167,7 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Can we schedule this discussion for tomorrow morning at 10:30 AM?", "callback_request"),
 
         # ==========================================
-        # 5. not_interested
+        # 5. not_interested (30 base seed utterances)
         # ==========================================
         ("Mujhe nahi chahiye koi bhi loan ya credit card, don't call me again.", "not_interested"),
         ("Not interested at all, please remove my mobile number from your database.", "not_interested"),
@@ -199,7 +201,7 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Please don't disturb during working hours, strictly not interested.", "not_interested"),
 
         # ==========================================
-        # 6. positive_confirmation
+        # 6. positive_confirmation (30 base seed utterances)
         # ==========================================
         ("Haan bilkul theek hai, aap booking proceed kar dijiye.", "positive_confirmation"),
         ("Yes I am ready to purchase, payment link WhatsApp kar do.", "positive_confirmation"),
@@ -233,68 +235,28 @@ def generate_curated_voice_agent_hinglish_data() -> pd.DataFrame:
         ("Approved from my side, initiate the service today itself.", "positive_confirmation"),
     ]
 
-    # Expand data synthetically with linguistic variations to make a robust benchmark
-    variations = [
-        # Noise additions, prefixes, polite markers, punctuation
-        ("", ""),
-        ("Arre ", " please"),
-        ("Hey, ", "!"),
-        ("Bhai ", " jaldi batao"),
-        ("Sir ", " kindly confirm"),
-        ("Sunna ", "..."),
-        ("Dekho ", " actually"),
-        ("Hello team, ", ""),
-    ]
+    records = []
+    class_counts = {}
+    for text, label in raw_intent_utterances:
+        class_counts[label] = class_counts.get(label, 0) + 1
+        base_id = f"{label}_{class_counts[label]:03d}"
+        records.append({
+            "base_id": base_id,
+            "text": text,
+            "intent": label,
+        })
 
-    expanded_records = []
-    for text, label in data:
-        for prefix, suffix in variations:
-            mod_text = f"{prefix}{text}{suffix}".strip()
-            expanded_records.append({"text": mod_text, "intent": label})
-
-    df = pd.DataFrame(expanded_records)
+    df = pd.DataFrame(records)
     return df
 
 
 def download_or_generate_dataset() -> pd.DataFrame:
     """
-    Tries to download datasets from Hugging Face if available,
-    and combines with domain-curated Hinglish intent utterances.
+    Returns the curated baseline dataset without applying pre-split synthetic augmentations.
     """
-    logger.info("Attempting to acquire Hindi-English code-mixed datasets...")
-    
-    # Try fetching public datasets if accessible
-    hf_records = []
-    try:
-        from datasets import load_dataset
-        logger.info("Checking Hugging Face datasets hub for Hinglish corpora...")
-        # Check l3cube-pune/hinglish-sentiment or similar if available
-        ds = load_dataset("l3cube-pune/hinglish-sentiment", split="train", trust_remote_code=True)
-        logger.info("Successfully fetched %d rows from Hugging Face dataset", len(ds))
-        
-        # Map sentiment into intent proxy categories to supplement corpus
-        # 0: negative -> complaint
-        # 1: neutral -> purchase_inquiry
-        # 2: positive -> positive_confirmation
-        label_map = {0: "complaint", 1: "purchase_inquiry", 2: "positive_confirmation"}
-        for item in ds:
-            text = item.get("text") or item.get("tweet")
-            label_id = item.get("label")
-            if text and label_id in label_map:
-                hf_records.append({"text": str(text), "intent": label_map[label_id]})
-    except Exception as e:
-        logger.warning("Could not download HF dataset directly (or network restricted): %s", e)
-        logger.info("Using rich curated conversational voice-agent Hinglish corpus.")
-
+    logger.info("Acquiring raw base Hinglish intent utterances...")
     curated_df = generate_curated_voice_agent_hinglish_data()
-    
-    if hf_records:
-        hf_df = pd.DataFrame(hf_records).sample(n=min(len(hf_records), 600), random_state=config.SEED)
-        combined_df = pd.concat([curated_df, hf_df], ignore_index=True)
-    else:
-        combined_df = curated_df
-
-    return combined_df
+    return curated_df
 
 
 def main():
@@ -302,8 +264,8 @@ def main():
     raw_output_path = config.RAW_DATA_DIR / "raw_dataset.csv"
 
     df = download_or_generate_dataset()
-    logger.info("Total acquired raw records: %d", len(df))
-    logger.info("Class distribution in raw data:\n%s", df["intent"].value_counts())
+    logger.info("Total acquired raw base records: %d", len(df))
+    logger.info("Class distribution in raw base data:\n%s", df["intent"].value_counts())
 
     df.to_csv(raw_output_path, index=False, encoding="utf-8")
     logger.info("Saved raw dataset to %s", raw_output_path)
