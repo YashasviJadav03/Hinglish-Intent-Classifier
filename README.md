@@ -1,319 +1,240 @@
-# Hinglish Intent Classifier
+# Hinglish Voice-Agent Intent Classifier
 
-Fine-tuned multilingual transformer for intent classification on code-mixed Hindi-English (Hinglish) voice-agent transcripts.
+A production-grade, parameter-efficient NLP classification pipeline for code-mixed Hindi-English (Hinglish) conversational voice-agent transcripts, adapted using **DistilBERT and Low-Rank Adaptation (PEFT / LoRA)** with zero-leakage group splitting and uncertainty fallback safeguards.
 
-[Live Web Application](https://hinglish-intent-classifier.onrender.com/) | [OpenAPI / Swagger Documentation](https://hinglish-intent-classifier.onrender.com/docs) | [Hugging Face Model Hub](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier) | [GitHub Repository](https://github.com/YashasviJadav03/Hinglish-Intent-Classifier)
-
----
-
-## Overview
-
-Conversational sales and customer support pipelines operating in South Asian markets frequently process code-mixed speech where speakers blend Hindi syntax with English vocabulary in Romanized script (for example, *"Thoda discount de do na, price bohot zyada hai"* or *"Order deliver nahi hua, please refund initiate karo"*).
-
-Standard natural language understanding (NLU) models trained exclusively on formal English or Devanagari Hindi degrade on these utterances due to non-standard phonetic transliteration and colloquial code-switching.
-
-This project implements a parameter-efficient sequence classification pipeline that adapts `distilbert-base-multilingual-cased` using Low-Rank Adaptation (LoRA / PEFT). The system cleans noisy transcripts, evaluates a zero-shot baseline, tunes lightweight adapter weights, and serves predictions through an asynchronous FastAPI microservice containerized for low-memory cloud deployment.
+[Live Web Application](https://hinglish-intent-classifier.onrender.com/) | [OpenAPI / Swagger Docs](https://hinglish-intent-classifier.onrender.com/docs) | [Hugging Face Model Hub](https://huggingface.co/yashasvijadav03/hinglish-intent-classifier) | [GitHub Repository](https://github.com/YashasviJadav03/Hinglish-Intent-Classifier)
 
 ---
 
-## Intent Taxonomy and Dataset
+## 1. Executive Summary & Problem Context
 
-The dataset comprises 1,440 code-mixed conversational utterances stratified into a 70% training, 15% validation, and 15% test split (1,008 train / 216 val / 216 test). It spans six distinct voice-agent intent categories:
+Conversational voice agents and automated contact centers across South Asian markets routinely process code-mixed speech where customers blend Hindi grammatical syntax with English vocabulary in Romanized script (for example, *"Thoda discount de do na, price bohot zyada lag raha hai"* or *"Abhi drive kar raha hu, 6 PM call back karna"*).
 
-| Intent Class | Description | Sample Utterance | Train | Val | Test | Total |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| `complaint` | Delivery delays, damaged goods, service issues | *"Mera order abhi tak deliver nahi hua, refund chahiye"* | 168 | 36 | 36 | 240 |
-| `purchase_inquiry` | Product specifications, plan details, warranty | *"Bhaiya is plan ke features aur warranty explain kardo"* | 168 | 36 | 36 | 240 |
-| `price_negotiation` | Discounts, coupon inquiries, rate matching | *"Thoda discount de do na, price bohot zyada hai"* | 168 | 36 | 36 | 240 |
-| `callback_request` | Rescheduling, driving, busy in meetings | *"Abhi driving kar raha hoon, baad me phone karna"* | 168 | 36 | 36 | 240 |
-| `not_interested` | Outright rejection, DND requests | *"Mujhe ye product bilkul nahi chahiye, do not call"* | 168 | 36 | 36 | 240 |
-| `positive_confirmation` | Agreement, booking confirmation, payment link | *"Haanji done samjho, payment link share kar dijiye"* | 168 | 36 | 36 | 240 |
-| **Total** | **Balanced 6-Class Distribution** | | **1,008** | **216** | **216** | **1,440** |
+Standard NLU systems trained exclusively on formal monolingual English or Devanagari Hindi degrade significantly on these streams due to:
+- **Phonetic Transliteration Noise**: Dialectal spelling variations (`chahiye` vs `chaiye` vs `mangta hai`, `plz` vs `plzzzz`).
+- **Conversational Boundary Ambiguities**: Nuanced boundary overlap between price negotiation and product inquiries.
+- **Voice ASR Errors**: Automatic Speech Recognition (ASR) dropouts, typos, and background noise.
+
+This repository implements an end-to-end, interview-grade sequence classification system engineered with strict data hygiene, classical and zero-shot baselines, LoRA fine-tuning, domain backbone ablations, and a low-latency FastAPI microservice.
 
 ---
 
-## Methodology
+## 2. Validation Architecture & Zero-Leakage Pipeline
 
 ```mermaid
-flowchart LR
-    A["Raw Hinglish Utterance"] --> B["Transliteration & Text Normalization"]
-    B --> C["Tokenization (Multilingual DistilBERT)"]
-    C --> D["PEFT LoRA Adapter (r=16, alpha=32)"]
-    D --> E["Linear Classification Head"]
-    E --> F["FastAPI Response / Web UI"]
+flowchart TD
+    A["Raw Curated Base Utterances (840 items)"] --> B["Group-Based Stratified Split (by base_id)"]
+    B -->|70% Train Seeds (588)| C["Isolated Synthetic Augmentation (4,704 samples)"]
+    B -->|15% Val Seeds (126)| D["Clean Val Set (126 un-augmented)"]
+    B -->|15% Test Seeds (126)| E["Clean In-Domain Test Set (126 un-augmented)"]
+    F["Dedicated Independent OOD Corpus"] --> G["Clean OOD Benchmark (120 noisy ASR / slang)"]
+    C --> H["Fine-Tuned LoRA Transformer"]
+    H --> E
+    H --> G
 ```
 
-1. **Text Preprocessing (`src/data/preprocess.py`)**:
-   - Normalizes phonetic elongation noise (e.g., *"bohooooot"* to *"bohot"*, *"plzzz"* to *"please"*).
-   - Extracts and isolates emojis and excess punctuation into auxiliary features.
-   - Cleans whitespaces and produces stratified splits to maintain class balance.
+### Data Leakage Discovery & Scientific Remediation
 
-2. **Zero-Shot Baseline (`src/model/baseline_eval.py`)**:
-   - Benchmarks zero-shot NLI hypothesis testing using multilingual DistilBERT on un-adapted Hinglish text.
+In synthetic NLP benchmarks, naive train/test splitting **after** variation augmentation leads to catastrophic data leakage (where the exact same core utterance appears across both train and test splits, producing artificial $100\%$ metrics).
 
-3. **LoRA Fine-Tuning (`src/model/train.py`)**:
-   - Injects trainable rank decomposition matrices into the multi-head attention projection layers (`q_lin`, `v_lin`).
-   - Trains only 1.18M parameters (~0.87% of the base model), preserving backbone weights and reducing training compute requirements.
-
-4. **Ablation Studies (`src/model/compare_runs.py`)**:
-   - Compares LoRA ranks ($r \in \{4, 8, 16\}$) across different learning rates to identify optimal convergence.
-
-5. **Evaluation and Error Analysis (`src/model/evaluate.py`)**:
-   - Evaluates macro-averaged and per-class metrics on the unseen test set, generating confusion matrices and error audit logs.
-
-6. **Inference Service and UI (`src/api/main.py`)**:
-   - Asynchronous FastAPI application exposing `/classify` and `/health` endpoints alongside an interactive client interface.
+We restructured the pipeline with strict mathematical isolation:
+1. **Group-Based Partitioning (`base_id`)**: The 840 unique base utterances are partitioned first across intents.
+2. **Augmentation Isolation**: Synthetic conversational wrappers (`"Arre ..."`, `"Hey, ..."` etc.) are applied **exclusively to the training split**.
+3. **Clean Evaluation Benchmark**: In-Domain test (`test.csv`) and Out-of-Distribution benchmark (`test_ood.csv`) remain completely clean, un-augmented base utterances.
+4. **Automated CI Assertions**: Unit tests and CI quality gates verify that $\text{Train}_{\text{base\_id}} \cap \text{Test}_{\text{base\_id}} = \emptyset$.
 
 ---
 
-## Experimental Results
+## 3. Dataset Taxonomy & Benchmark Distribution
 
-### Test Set Performance: Zero-Shot Baseline vs. LoRA Fine-Tuned
+The corpus comprises **5,076 total processed samples** across 6 canonical voice-agent intent classes:
 
-| Metric | Zero-Shot Baseline (DistilBERT NLI) | Fine-Tuned (DistilBERT + PEFT LoRA) | Absolute Delta |
-| :--- | :---: | :---: | :---: |
-| **Overall Accuracy** | **39.35%** | **100.00%** | **+60.65%** |
-| **Macro F1-Score** | **0.3391** | **1.0000** | **+0.6609** |
-| **Weighted F1-Score** | 0.3391 | 1.0000 | +0.6609 |
-
-### Per-Class F1 Score Comparison
-
-| Intent Class | Baseline F1 | LoRA Fine-Tuned F1 | Delta | Test Support |
-| :--- | :---: | :---: | :---: | :---: |
-| `complaint` | 0.2917 | **1.0000** | +0.7083 | 36 |
-| `purchase_inquiry` | 0.5106 | **1.0000** | +0.4894 | 36 |
-| `price_negotiation` | 0.3542 | **1.0000** | +0.6458 | 36 |
-| `callback_request` | 0.0541 | **1.0000** | +0.9459 | 36 |
-| `not_interested` | 0.2857 | **1.0000** | +0.7143 | 36 |
-| `positive_confirmation` | 0.5370 | **1.0000** | +0.4630 | 36 |
-
-### Hyperparameter Ablation Summary
-
-| Run Identifier | LoRA Rank ($r$) | LoRA Alpha ($\alpha$) | Learning Rate | Epochs | Validation Loss | Validation Accuracy | Validation Macro-F1 |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `lora_r16_lr5e4` | **16** | **32** | **5e-4** | **4** | **0.0254** | **100.00%** | **1.0000** |
-| `lora_r4_lr3e4` | 4 | 8 | 3e-4 | 5 | 0.2058 | 94.44% | 0.9431 |
-| `lora_r8_lr3e4` | 8 | 16 | 3e-4 | 4 | 0.2705 | 92.13% | 0.9207 |
+| Intent Class | Description | Canonical Example | Train (Aug) | Val (Clean) | Test (Clean) | OOD Benchmark | Total Samples |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `complaint` | Delivery delays, defective items, bad service | *"Order deliver nahi hua 5 din se, refund chahiye"* | 784 | 21 | 21 | 20 | 846 |
+| `purchase_inquiry` | Features, specs, warranty, plan details | *"Is product ke specifications aur pricing details bhejo"* | 784 | 21 | 21 | 20 | 846 |
+| `price_negotiation` | Discounts, bargains, promo codes, rate match | *"Thoda discount de do na, price thoda zyada hai"* | 784 | 21 | 21 | 20 | 846 |
+| `callback_request` | Rescheduling, busy in meeting, driving | *"Abhi drive kar raha hu, kal subah 10 baje call karna"* | 784 | 21 | 21 | 20 | 846 |
+| `not_interested` | Outright refusal, DND activation | *"Mujhe nahi chahiye koi offer, DND activate karo"* | 784 | 21 | 21 | 20 | 846 |
+| `positive_confirmation` | Deal lock, token transfer, booking confirm | *"Haan bilkul theek hai, aap booking proceed kar dijiye"* | 784 | 21 | 21 | 20 | 846 |
+| **Total** | **Balanced 6-Class Taxonomy** | | **4,704** | **126** | **126** | **120** | **5,076** |
 
 ---
 
-## Error Analysis
+## 4. Experimental Results & Multi-Model Benchmark
 
-1. **Baseline Failure Modes**: The zero-shot model failed primarily on temporal deferrals (`callback_request`, F1: 0.0541) and service grievances (`complaint`, F1: 0.2917). Without task-specific context, colloquial markers like *"baad me"* or *"abhi drive kar raha hu"* were misattributed to informational inquiries.
-2. **LoRA Disambiguation**: Adapting the attention weights directly resolved boundary ambiguities between polite refusal (`not_interested`) and negotiation (`price_negotiation`), achieving unambiguous separation across all 216 holdout samples.
+Models were benchmarked against both the **In-Domain Clean Test Set** ($N=126$) and the **Noisy Out-of-Distribution Benchmark** ($N=120$):
 
-![Confusion Matrix](results/confusion_matrix.png)
+```mermaid
+gantt
+    title Model Accuracy Comparison (%)
+    dateFormat X
+    axisFormat %s
+    section In-Domain Test
+    Fine-Tuned DistilBERT + LoRA : 0, 89
+    TF-IDF + Logistic Regression : 0, 94
+    TF-IDF + Linear SVM          : 0, 93
+    Zero-Shot Keyword Heuristic   : 0, 62
+    section OOD Benchmark
+    TF-IDF + Linear SVM          : 0, 93
+    TF-IDF + Logistic Regression : 0, 93
+    Fine-Tuned DistilBERT + LoRA : 0, 78
+    Zero-Shot Keyword Heuristic   : 0, 60
+```
+
+### Comprehensive Benchmark Results
+
+| Model Architecture | In-Domain Accuracy | In-Domain Macro F1 | OOD Benchmark Accuracy | OOD Benchmark Macro F1 | Deployment Latency (CPU) | Memory Footprint |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **TF-IDF + Logistic Regression** | **93.7%** | **0.9370** | **92.5%** | **0.9237** | 2 ms | < 5 MB |
+| **TF-IDF + Linear SVM** | 92.9% | 0.9287 | 93.3% | 0.9320 | 2 ms | < 5 MB |
+| **TF-IDF + Multinomial Naive Bayes** | 91.3% | 0.9124 | 90.0% | 0.8943 | 2 ms | < 5 MB |
+| **TF-IDF + Random Forest** | 92.1% | 0.9210 | 75.0% | 0.7575 | 12 ms | 35 MB |
+| **Zero-Shot Keyword Baseline** | 61.9% | 0.5973 | 60.0% | 0.5649 | 1 ms | < 1 MB |
+| **Fine-Tuned DistilBERT + PEFT LoRA** | **88.9%** | **0.8886** | **78.3%** | **0.7831** | **35 ms** | **270 MB** |
+
+### Fine-Tuned LoRA In-Domain Classification Report:
+```
+                       precision    recall  f1-score   support
+
+            complaint       0.83      0.95      0.89        21
+     purchase_inquiry       0.95      0.86      0.90        21
+    price_negotiation       1.00      0.81      0.89        21
+     callback_request       0.78      1.00      0.88        21
+       not_interested       0.89      0.76      0.82        21
+positive_confirmation       0.95      0.95      0.95        21
+
+             accuracy                           0.89       126
+            macro avg       0.90      0.89      0.89       126
+         weighted avg       0.90      0.89      0.89       126
+```
 
 ---
 
-## API Reference and Usage
+## 5. Backbone Architecture & Subword Fertility Ablation
 
-### Local Execution
+We evaluated subword tokenization fragmentation on Hinglish roots across major multilingual backbones (documented in [results/ablation_summary.md](file:///d:/Hinglish-Intent-Classifier/results/ablation_summary.md)):
 
-```bash
-# Clone the repository
-git clone https://github.com/YashasviJadav03/Hinglish-Intent-Classifier.git
-cd Hinglish-Intent-Classifier
+| Backbone Architecture | Parameters | Vocab Size | Subwords / Hinglish Word (Fertility) | Avg Subwords / Voice Turn | CPU Latency | Production Recommendation |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **`distilbert-base-multilingual-cased`** | **135M** | **119,547** | **2.90 tokens** | **18.4 tokens** | **35 ms** | **Recommended for Real-Time Streaming** |
+| **`google/muril-base-cased`** | 236M | 197,285 | 2.20 tokens | 14.6 tokens | 68 ms | Recommended for Offline Batch Analytics |
+| **`l3cube-pune/hing-bert`** | 110M | 119,547 | 3.30 tokens | 18.2 tokens | 30 ms | Alternative Dedicated Hinglish Backbone |
+| **`l3cube-pune/hing-roberta`** | 125M | 50,265 | 2.45 tokens | 15.6 tokens | 32 ms | Alternative BPE Hinglish Backbone |
 
-# Install dependencies
-pip install -r requirements.txt
+---
 
-# Start the server
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000
-```
+## 6. Qualitative Error Analysis & Failure Modes
 
-### Health Check
+Misclassified examples were audited in [results/misclassified_examples.csv](file:///d:/Hinglish-Intent-Classifier/results/misclassified_examples.csv). Key linguistic failure modes identified:
 
-```bash
-curl -X GET https://hinglish-intent-classifier.onrender.com/health
-```
+1. **Negative Sentiment Spillover**:
+   - *Example*: `"bhai itna ghatiya product life me ni dekha return lelo isko"` (True: `complaint` $\to$ Predicted: `not_interested`).
+   - *Diagnosis*: Intense hostility triggers refusal-to-interact probability mass rather than defect logging.
+2. **Implicit Price Negotiation vs Inquiry**:
+   - *Example*: `"First time customer ke liye koi introductory discount voucher hai?"` (True: `price_negotiation` $\to$ Predicted: `purchase_inquiry`).
+   - *Diagnosis*: Grammatically structured as a yes/no inquiry about voucher availability rather than an imperative bargaining demand.
+3. **Multi-Intent Code-Switching**:
+   - *Example*: `"Daily 10 call aate hain aapke, block list me daal raha hu number"` (True: `not_interested` $\to$ Predicted: `callback_request`).
+   - *Diagnosis*: High recurrence of calling-related tokens (`"call"`, `"number"`) without negation triggers callback classification.
 
-```json
-{
-  "status": "healthy",
-  "model_loaded": true,
-  "device": "cpu",
-  "intent_classes": [
-    "complaint",
-    "purchase_inquiry",
-    "price_negotiation",
-    "callback_request",
-    "not_interested",
-    "positive_confirmation"
-  ]
-}
-```
+---
 
-#### Inference Request (Single Utterance)
+## 7. Production API with Confidence Fallback Safeguards
+
+The FastAPI microservice in [src/api/main.py](file:///d:/Hinglish-Intent-Classifier/src/api/main.py) incorporates production safety mechanisms:
+
+### Inference with Uncertainty Detection (`POST /classify`)
 
 ```bash
-curl -X POST https://hinglish-intent-classifier.onrender.com/classify \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Thoda discount de do na bhai price bohot zyada lag raha hai"}'
+curl -X POST "http://localhost:7860/classify" \
+     -H "Content-Type: application/json" \
+     -d '{"text": "Is model me discount mil sakta hai kya?", "confidence_threshold": 0.60}'
 ```
 
 ```json
 {
   "intent": "price_negotiation",
-  "confidence": 0.9997,
-  "cleaned_text": "Thoda discount de do na bhai price bohot zyada lag raha hai",
+  "confidence": 0.5421,
+  "is_uncertain": true,
+  "fallback": true,
+  "secondary_intent": "purchase_inquiry",
+  "secondary_confidence": 0.4103,
+  "cleaned_text": "Is model me discount mil sakta hai kya?",
   "all_scores": {
-    "complaint": 0.0001,
-    "purchase_inquiry": 0.0,
-    "price_negotiation": 0.9997,
-    "callback_request": 0.0,
-    "not_interested": 0.0,
-    "positive_confirmation": 0.0002
+    "complaint": 0.0102,
+    "purchase_inquiry": 0.4103,
+    "price_negotiation": 0.5421,
+    "callback_request": 0.0125,
+    "not_interested": 0.0084,
+    "positive_confirmation": 0.0165
   }
 }
 ```
 
-### Batch Inference Request
+---
 
-```bash
-curl -X POST https://hinglish-intent-classifier.onrender.com/classify/batch \
-  -H "Content-Type: application/json" \
-  -d '{"texts": ["Thoda discount de do na", "Refund kab aayega?", "Call back later"]}'
-```
+## 8. Senior ML & Client Presentation Framing Guide
 
-```json
-{
-  "results": [
-    {
-      "intent": "price_negotiation",
-      "confidence": 0.9997,
-      "cleaned_text": "Thoda discount de do na",
-      "all_scores": { "price_negotiation": 0.9997, "positive_confirmation": 0.0002, "complaint": 0.0001, "purchase_inquiry": 0.0, "callback_request": 0.0, "not_interested": 0.0 }
-    },
-    {
-      "intent": "complaint",
-      "confidence": 0.9994,
-      "cleaned_text": "Refund kab aayega?",
-      "all_scores": { "complaint": 0.9994, "purchase_inquiry": 0.0004, "price_negotiation": 0.0001, "callback_request": 0.0, "not_interested": 0.0, "positive_confirmation": 0.0001 }
-    },
-    {
-      "intent": "callback_request",
-      "confidence": 0.9996,
-      "cleaned_text": "Call back later",
-      "all_scores": { "callback_request": 0.9996, "not_interested": 0.0002, "complaint": 0.0001, "purchase_inquiry": 0.0001, "price_negotiation": 0.0, "positive_confirmation": 0.0 }
-    }
-  ],
-  "total": 3
-}
-```
+When presenting this project to senior engineering interviewers or enterprise consulting clients, frame the project around **scientific validation rigor** rather than superficial numbers:
 
-### Python Client Integration
-
-```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from peft import PeftModel
-import torch
-
-base_model_name = "distilbert-base-multilingual-cased"
-adapter_name = "yashasvijadav03/hinglish-intent-classifier"
-
-tokenizer = AutoTokenizer.from_pretrained(base_model_name)
-base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name, num_labels=6)
-model = PeftModel.from_pretrained(base_model, adapter_name)
-model.eval()
-
-inputs = tokenizer("Thoda discount de do na", return_tensors="pt")
-with torch.no_grad():
-    logits = model(**inputs).logits
-    probabilities = torch.softmax(logits, dim=-1)
-```
+| What Not to Say (Interview Red Flag) | What to Say (Senior ML / Consultant Framing) |
+| :--- | :--- |
+| *"Our LoRA DistilBERT model achieved a perfect 100% accuracy across all classes."* | *"During initial prototyping, we identified a synthetic data leakage issue where pre-split variation expansion caused identical base sentences to leak into test sets, creating an artificial 100% metric."* |
+| *"Hinglish intent classification is trivial and cleanly solved with DistilBERT."* | *"We restructured the validation framework to use group-based splitting on base utterances, isolated synthetic variations strictly to train, and evaluated against both clean in-domain and noisy OOD benchmarks, establishing a realistic 88.9% in-domain F1 and 78.3% OOD F1 with transparent error analysis."* |
+| *"Our model makes zero mistakes."* | *"We mapped genuine linguistic failure modes (such as negative sentiment spillover and implicit discount queries) and added confidence threshold fallbacks ($<0.60$) and secondary intent ranking to prevent erroneous automated routing in production voice agents."* |
 
 ---
 
-## Automated Testing & Quality Assurance
-
-The repository includes a comprehensive test suite covering data preprocessing, model configuration integrity, and API endpoint routing.
+## 9. Quickstart & Local Setup
 
 ```bash
-# Run the complete test suite
+# 1. Clone repository
+git clone https://github.com/YashasviJadav03/Hinglish-Intent-Classifier.git
+cd Hinglish-Intent-Classifier
+
+# 2. Set up virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# 3. Generate & Preprocess Datasets
+python src/data/load_dataset.py
+python src/data/preprocess.py
+
+# 4. Run Baseline & Backbone Ablations
+python src/model/baseline_eval.py
+python src/model/benchmark_backbones.py
+
+# 5. Run LoRA Fine-Tuning & Evaluation
+python src/model/train.py --num_train_epochs 4 --learning_rate 3e-4
+python src/model/evaluate.py
+
+# 6. Run Unit & Zero-Leakage Tests
 pytest -v tests/
+
+# 7. Start FastAPI Service
+uvicorn src.api.main:app --host 0.0.0.0 --port 7860 --reload
 ```
-
-- `tests/test_preprocess.py`: Verifies transliteration elongation compression, emoji extraction, excess punctuation normalization, and stratified dataset splitting.
-- `tests/test_api.py`: Validates `/health`, `/api/info`, single `/classify`, vectorized `/classify/batch`, input payload size constraints, and client UI routing.
-- `tests/test_config.py`: Verifies bidirectional label mapping consistency and training hyperparameter constants.
-
-Continuous integration is handled automatically via **GitHub Actions** (`.github/workflows/ci.yml`) on all pushes and pull requests.
 
 ---
 
-## Tech Stack
-
-| Layer | Component | Functionality |
-| :--- | :--- | :--- |
-| **Model Backbone** | Hugging Face Transformers | `distilbert-base-multilingual-cased` |
-| **Fine-Tuning** | PEFT (LoRA) | Parameter-efficient low-rank adaptation |
-| **Deep Learning** | PyTorch | Model definition and CPU-optimized inference |
-| **Backend API** | FastAPI, Uvicorn | Asynchronous REST microservice |
-| **Frontend UI** | Vanilla HTML, CSS, JavaScript | Interactive web dashboard and voice transcript simulator |
-| **Data Processing** | Scikit-learn, Pandas, Regex | Stratified sampling and text normalization |
-| **Testing & CI/CD** | Pytest, GitHub Actions | Automated unit/integration tests and CI pipeline |
-| **Deployment** | Docker, Render, Hugging Face Hub | Containerized hosting and model registry |
-
----
-
-## Project Structure
+## 10. Repository Structure
 
 ```
-hinglish-intent-classifier/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                     # Continuous Integration workflow
+Hinglish-Intent-Classifier/
+├── .github/workflows/ci.yml      # CI pipeline with zero-leakage & metric sanity gates
+├── config.py                     # Centralized paths and hyperparameters
 ├── data/
-│   ├── raw/
-│   │   └── raw_dataset.csv            # Raw dataset
-│   └── processed/
-│       ├── train.csv                  # Stratified train split (70%)
-│       ├── val.csv                    # Stratified validation split (15%)
-│       └── test.csv                   # Stratified test split (15%)
-├── models/
-│   └── lora-adapter/                  # Exported LoRA adapter weights & tokenizer
-├── notebooks/                         # Exploratory data analysis
-├── results/
-│   ├── baseline_metrics.json          # Zero-shot baseline evaluation
-│   ├── final_eval_metrics.json        # LoRA final test metrics
-│   ├── confusion_matrix.png           # Confusion matrix visualization
-│   ├── experiment_log.csv             # Ablation experiment run records
-│   ├── ablation_summary.md            # Summary table of hyperparameter runs
-│   ├── comparison_table.md            # Side-by-side baseline vs LoRA comparison
-│   └── misclassified_examples.csv     # Error analysis audit logs
+│   ├── raw/                      # Raw canonical base and OOD datasets
+│   └── processed/                # Zero-leakage train, val, test, test_ood CSVs
+├── models/                       # LoRA adapter checkpoints and tokenizer
+├── results/                      # Baseline metrics, final eval, confusion matrix, error analysis
 ├── src/
-│   ├── __init__.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── main.py                    # FastAPI application endpoints
-│   │   └── static/                    # Frontend client files
-│   │       ├── index.html             # UI layout and test scenario interface
-│   │       ├── style.css              # Responsive UI design system
-│   │       └── app.js                 # API controller and chart rendering
-│   ├── data/
-│   │   ├── __init__.py
-│   │   ├── load_dataset.py            # Dataset loading and label mapping
-│   │   └── preprocess.py              # Text cleaning and splitting
-│   └── model/
-│       ├── __init__.py
-│       ├── baseline_eval.py           # Zero-shot evaluation script
-│       ├── train.py                   # LoRA training execution pipeline
-│       ├── compare_runs.py            # Ablation ranking utility
-│       └── evaluate.py                # Final test evaluation and confusion matrix
-├── tests/
-│   ├── test_api.py                    # API and route integration tests
-│   ├── test_config.py                 # Configuration and mapping unit tests
-│   └── test_preprocess.py             # Normalization and splitting tests
-├── Dockerfile                         # Production container definition
-├── config.py                          # Global configuration settings
-├── requirements.txt                   # Dependency list
-├── .gitignore                         # Git exclusion rules
-└── README.md                          # Project documentation
+│   ├── api/main.py               # FastAPI inference service with fallback thresholds
+│   ├── data/                     # Load dataset & Group-based preprocessing
+│   └── model/                    # Baseline eval, backbone benchmark, train, evaluate
+├── tests/                        # Pytest unit & integration test suite
+├── PHASE_WISE_IMPROVEMENTS.md    # 5-Phase engineering and remediation roadmap
+└── README.md                     # Comprehensive technical documentation
 ```
-
----
-
-## License
-
-This project is licensed under the MIT License.

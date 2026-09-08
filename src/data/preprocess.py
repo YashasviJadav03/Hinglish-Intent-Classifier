@@ -7,9 +7,10 @@ Preprocesses code-mixed Hinglish conversational data:
 3. Cleans whitespace, casing, and control characters
 4. Deduplicates rows and drops empty/near-empty utterances
 5. Performs Group-Based Stratified Split on base_ids BEFORE any data augmentation
-6. Augments ONLY the training partition (val and test remain clean, un-augmented base utterances)
-7. Validates zero lexical/semantic leakage across train, val, and test splits with automated assertions
-8. Saves outputs to data/processed/train.csv, val.csv, test.csv
+6. Augments ONLY the training partition (val, test, and test_ood remain clean, un-augmented)
+7. Preprocesses the independent Out-of-Distribution (OOD) benchmark dataset
+8. Validates zero lexical/semantic leakage across all splits with automated assertions
+9. Saves outputs to data/processed/train.csv, val.csv, test.csv, test_ood.csv
 """
 
 import re
@@ -204,10 +205,15 @@ def augment_training_data(
     return aug_df
 
 
-def verify_split_leakage(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame) -> bool:
+def verify_split_leakage(
+    train_df: pd.DataFrame,
+    val_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    ood_df: Optional[pd.DataFrame] = None
+) -> bool:
     """
     Performs strict automated validation assertions ensuring 0% data leakage
-    across train, validation, and test splits.
+    across train, validation, test, and OOD benchmark splits.
     """
     train_base_ids = set(train_df["base_id"])
     val_base_ids = set(val_df["base_id"])
@@ -241,11 +247,24 @@ def verify_split_leakage(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: 
     if val_test_text_leakage:
         raise ValueError(f"CRITICAL LEAKAGE: Val and Test share exact clean_text: {val_test_text_leakage}")
 
-    logger.info("Leakage verification PASSED: 0 overlapping base IDs or exact utterances across splits.")
+    if ood_df is not None:
+        ood_base_ids = set(ood_df["base_id"])
+        ood_clean_texts = set(ood_df["clean_text"])
+        if train_base_ids.intersection(ood_base_ids):
+            raise ValueError("CRITICAL LEAKAGE: Train and OOD share base_ids!")
+        if train_clean_texts.intersection(ood_clean_texts):
+            raise ValueError("CRITICAL LEAKAGE: Train and OOD share exact clean_text!")
+
+    logger.info("Leakage verification PASSED: 0 overlapping base IDs or exact utterances across all splits.")
     return True
 
 
-def print_class_balance_report(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame):
+def print_class_balance_report(
+    train_df: pd.DataFrame,
+    val_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    ood_df: Optional[pd.DataFrame] = None
+):
     """
     Logs comprehensive dataset summary and class distribution report.
     """
@@ -255,45 +274,51 @@ def print_class_balance_report(train_df: pd.DataFrame, val_df: pd.DataFrame, tes
     unique_test_bases = test_df["base_id"].nunique()
     total_unique_bases = unique_train_bases + unique_val_bases + unique_test_bases
 
-    print("\n" + "=" * 70)
-    print("           DATASET CLASS DISTRIBUTION & INTEGRITY REPORT")
-    print("=" * 70)
-    print(f"Total Unique Base Utterances: {total_unique_bases}")
+    print("\n" + "=" * 78)
+    print("           DATASET CLASS DISTRIBUTION & BENCHMARK INTEGRITY REPORT")
+    print("=" * 78)
+    print(f"Total Unique Canonical Base Utterances: {total_unique_bases}")
     print(f"  • Train Base Seeds: {unique_train_bases} ({unique_train_bases/total_unique_bases*100:.1f}%) -> Augmented: {len(train_df)} samples")
     print(f"  • Val Base Seeds:   {unique_val_bases} ({unique_val_bases/total_unique_bases*100:.1f}%) -> Un-augmented: {len(val_df)} samples")
     print(f"  • Test Base Seeds:  {unique_test_bases} ({unique_test_bases/total_unique_bases*100:.1f}%) -> Un-augmented: {len(test_df)} samples")
-    print(f"Total Samples (Train + Val + Test): {total_samples}")
-    print("-" * 70)
+    if ood_df is not None:
+        print(f"  • OOD Benchmark:    {len(ood_df)} independent samples (ASR noise, typos, slang)")
+    print(f"Total Processed Samples: {total_samples + (len(ood_df) if ood_df is not None else 0)}")
+    print("-" * 78)
 
     summary_data = []
     for label in config.INTENT_LABELS:
         tr_cnt = (train_df["intent"] == label).sum()
         vl_cnt = (val_df["intent"] == label).sum()
         ts_cnt = (test_df["intent"] == label).sum()
+        ood_cnt = (ood_df["intent"] == label).sum() if ood_df is not None else 0
         total = tr_cnt + vl_cnt + ts_cnt
         summary_data.append({
             "Intent Label": label,
             "Train (Aug)": tr_cnt,
             "Val (Clean)": vl_cnt,
             "Test (Clean)": ts_cnt,
-            "Total": total,
+            "OOD Benchmark": ood_cnt,
+            "Total In-Domain": total,
             "Train %": f"{tr_cnt/len(train_df)*100:.1f}%",
         })
 
     summary_df = pd.DataFrame(summary_data)
     print(summary_df.to_string(index=False))
-    print("=" * 70 + "\n")
+    print("=" * 78 + "\n")
 
 
 def main():
     config.RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
     raw_path = config.RAW_DATA_DIR / "raw_dataset.csv"
-    if not raw_path.exists():
-        logger.info("Raw dataset not found at %s. Running load_dataset first...", raw_path)
+    raw_ood_path = config.RAW_DATA_DIR / "raw_ood_dataset.csv"
+
+    if not raw_path.exists() or not raw_ood_path.exists():
+        logger.info("Raw datasets not found. Running load_dataset first...")
         from src.data.load_dataset import main as run_load
         run_load()
 
-    logger.info("Loading raw dataset from %s", raw_path)
+    logger.info("Loading raw base dataset from %s", raw_path)
     raw_df = pd.read_csv(raw_path)
 
     # 1. Clean and deduplicate base dataset
@@ -311,21 +336,32 @@ def main():
     # 3. Augment ONLY the training split
     train_df = augment_training_data(train_base_df)
 
-    # 4. Rigorous automated leakage verification
-    verify_split_leakage(train_df, val_df, test_df)
+    # 4. Clean and preprocess OOD benchmark dataset
+    ood_df = None
+    if raw_ood_path.exists():
+        logger.info("Processing OOD benchmark dataset from %s", raw_ood_path)
+        raw_ood_df = pd.read_csv(raw_ood_path)
+        ood_df = preprocess_dataframe(raw_ood_df)
 
-    # 5. Save processed splits to data/processed/
+    # 5. Rigorous automated leakage verification
+    verify_split_leakage(train_df, val_df, test_df, ood_df=ood_df)
+
+    # 6. Save processed splits to data/processed/
     config.PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     train_df.to_csv(config.TRAIN_DATA_PATH, index=False, encoding="utf-8")
     val_df.to_csv(config.VAL_DATA_PATH, index=False, encoding="utf-8")
     test_df.to_csv(config.TEST_DATA_PATH, index=False, encoding="utf-8")
 
+    if ood_df is not None:
+        ood_df.to_csv(config.TEST_OOD_DATA_PATH, index=False, encoding="utf-8")
+        logger.info("Saved test_ood.csv (OOD Benchmark) -> %s", config.TEST_OOD_DATA_PATH)
+
     logger.info("Saved train.csv (Augmented) -> %s", config.TRAIN_DATA_PATH)
     logger.info("Saved val.csv   (Clean)     -> %s", config.VAL_DATA_PATH)
     logger.info("Saved test.csv  (Clean)     -> %s", config.TEST_DATA_PATH)
 
-    # 6. Print class distribution and integrity summary
-    print_class_balance_report(train_df, val_df, test_df)
+    # 7. Print class distribution and integrity summary
+    print_class_balance_report(train_df, val_df, test_df, ood_df=ood_df)
 
 
 if __name__ == "__main__":

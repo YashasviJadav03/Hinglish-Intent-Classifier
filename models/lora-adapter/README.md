@@ -7,27 +7,22 @@ language:
 - hi
 - en
 tags:
+- base_model:adapter:distilbert-base-multilingual-cased
 - lora
-- peft
 - transformers
-- intent-classification
-- hinglish
-- code-mixed
-- nlu
-- voice-agent
 widget:
-- text: "Thoda discount de do na, price bohot zyada hai."
-  example_title: "Price Negotiation"
-- text: "Order deliver nahi hua abhi tak, refund kab milega?"
-  example_title: "Complaint"
-- text: "Haanji done samjho, payment link share kar dijiye."
-  example_title: "Positive Confirmation"
-- text: "Abhi driving kar raha hoon, baad me phone karna."
-  example_title: "Callback Request"
-- text: "Mujhe ye product bilkul nahi chahiye, do not call."
-  example_title: "Not Interested"
-- text: "Bhaiya is plan ke features aur warranty explain kardo."
-  example_title: "Purchase Inquiry"
+- text: Thoda discount de do na, price bohot zyada hai.
+  example_title: Price Negotiation
+- text: Order deliver nahi hua abhi tak, refund kab milega?
+  example_title: Complaint
+- text: Haanji done samjho, payment link share kar dijiye.
+  example_title: Positive Confirmation
+- text: Abhi driving kar raha hoon, baad me phone karna.
+  example_title: Callback Request
+- text: Mujhe ye product bilkul nahi chahiye, do not call.
+  example_title: Not Interested
+- text: Bhaiya is plan ke features aur warranty explain kardo.
+  example_title: Purchase Inquiry
 ---
 
 # 🎙️ Hinglish Intent Classifier (LoRA + DistilBERT)
@@ -101,3 +96,6 @@ print(f"Predicted Intent: {id2label[predicted_id]} (Confidence: {probs[0][predic
 - **LoRA Parameters:** Rank $r=16$, Alpha $\alpha=32$, Dropout $0.1$, Target Modules: `q_lin`, `v_lin`
 - **Training Epochs:** 3
 - **Learning Rate:** `5e-4` with Linear Warmup
+### Framework versions
+
+- PEFT 0.20.0

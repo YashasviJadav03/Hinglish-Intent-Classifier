@@ -3,15 +3,18 @@ src/api/main.py
 
 FastAPI inference service for Hinglish Voice-Agent Intent Classification.
 
-Endpoints:
-- GET  /health   -> Health check & model metadata
-- POST /classify -> Classifies Hinglish utterance and returns top intent, confidence, and full probability distribution
+Features:
+1. Low-memory container optimization (<512MB RAM) with PEFT LoRA adapter
+2. Confidence Thresholding & Uncertainty Fallback Detection (flags predictions with max softmax < threshold)
+3. Secondary Intent prediction for ambiguous conversational boundaries
+4. Single-utterance (/classify) and Batch-vectorized (/classify/batch) inference endpoints
+5. Interactive dashboard mounting with CORS support
 """
 
 import sys
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -91,7 +94,7 @@ def get_model_and_tokenizer():
             MODEL = PeftModel.from_pretrained(base_model, "yashasvijadav03/hinglish-intent-classifier")
             TOKENIZER = AutoTokenizer.from_pretrained("yashasvijadav03/hinglish-intent-classifier")
         except Exception as e:
-            logger.warning(f"Could not load adapter from Hub: {e}. Falling back to base model.")
+            logger.warning("Could not load adapter from Hub: %s. Falling back to base model.", e)
             MODEL = base_model
             TOKENIZER = AutoTokenizer.from_pretrained(base_model_name)
 
@@ -110,27 +113,45 @@ class ClassifyRequest(BaseModel):
         description="The customer voice transcript utterance in code-mixed Hinglish.",
         example="Thoda discount de do na, price bohot zyada hai.",
     )
+    confidence_threshold: float = Field(
+        default=0.60,
+        ge=0.0,
+        le=1.0,
+        description="Threshold below which prediction is marked as uncertain / fallback.",
+        example=0.60,
+    )
 
 
 class ClassifyBatchRequest(BaseModel):
-    texts: list[str] = Field(
+    texts: List[str] = Field(
         ...,
         min_length=1,
         max_length=100,
         description="List of Hinglish utterances to classify in batch.",
         example=["Thoda discount de do na", "Refund kab aayega?"],
     )
+    confidence_threshold: float = Field(
+        default=0.60,
+        ge=0.0,
+        le=1.0,
+        description="Threshold below which predictions are marked as uncertain / fallback.",
+        example=0.60,
+    )
 
 
 class ClassifyResponse(BaseModel):
     intent: str
     confidence: float
+    is_uncertain: bool
+    fallback: bool
+    secondary_intent: Optional[str] = None
+    secondary_confidence: Optional[float] = None
     cleaned_text: str
     all_scores: Dict[str, float]
 
 
 class ClassifyBatchResponse(BaseModel):
-    results: list[ClassifyResponse]
+    results: List[ClassifyResponse]
     total: int
 
 
@@ -146,13 +167,12 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("Warmup failed (non-fatal): %s", e)
     yield
-    # Shutdown logic if needed
 
 
 app = FastAPI(
     title=config.API_TITLE,
     version=config.API_VERSION,
-    description="FastAPI service serving fine-tuned LoRA Transformer for noisy code-mixed Hindi-English voice utterances.",
+    description="Production FastAPI service serving fine-tuned LoRA Transformer for code-mixed Hindi-English voice utterances with confidence fallback safeguards.",
     lifespan=lifespan,
 )
 
@@ -191,6 +211,8 @@ def api_info():
         "service": config.API_TITLE,
         "version": config.API_VERSION,
         "status": "online",
+        "confidence_threshold_default": 0.60,
+        "supported_intents": config.INTENT_LABELS,
         "docs_url": "/docs",
     }
 
@@ -233,15 +255,29 @@ def classify_utterance(request: ClassifyRequest):
             outputs = model(**inputs)
             probs = F.softmax(outputs.logits, dim=-1).squeeze(0).cpu().numpy()
 
-        top_idx = int(probs.argmax())
+        sorted_indices = probs.argsort()[::-1]
+        top_idx = int(sorted_indices[0])
         predicted_intent = config.ID2LABEL[top_idx]
         confidence = float(round(float(probs[top_idx]), 4))
+
+        # Secondary intent calculation
+        secondary_idx = int(sorted_indices[1])
+        secondary_intent = config.ID2LABEL[secondary_idx]
+        secondary_confidence = float(round(float(probs[secondary_idx]), 4))
+
+        # Confidence Thresholding & Uncertainty detection
+        is_uncertain = confidence < request.confidence_threshold
+        fallback = is_uncertain
 
         all_scores = {config.ID2LABEL[i]: float(round(float(prob), 4)) for i, prob in enumerate(probs)}
 
         return ClassifyResponse(
             intent=predicted_intent,
             confidence=confidence,
+            is_uncertain=is_uncertain,
+            fallback=fallback,
+            secondary_intent=secondary_intent,
+            secondary_confidence=secondary_confidence,
             cleaned_text=clean_text,
             all_scores=all_scores,
         )
@@ -252,7 +288,7 @@ def classify_utterance(request: ClassifyRequest):
 
 @app.post("/classify/batch", response_model=ClassifyBatchResponse, tags=["Inference"])
 def classify_batch(request: ClassifyBatchRequest):
-    """Processes a batch of utterances in a single vectorized forward pass."""
+    """Processes a batch of utterances in a single vectorized forward pass with fallback thresholding."""
     model, tokenizer, device = get_model_and_tokenizer()
 
     if not request.texts:
@@ -278,14 +314,27 @@ def classify_batch(request: ClassifyBatchRequest):
 
         results = []
         for i, probs in enumerate(probs_matrix):
-            top_idx = int(probs.argmax())
+            sorted_indices = probs.argsort()[::-1]
+            top_idx = int(sorted_indices[0])
             predicted_intent = config.ID2LABEL[top_idx]
             confidence = float(round(float(probs[top_idx]), 4))
+
+            secondary_idx = int(sorted_indices[1])
+            secondary_intent = config.ID2LABEL[secondary_idx]
+            secondary_confidence = float(round(float(probs[secondary_idx]), 4))
+
+            is_uncertain = confidence < request.confidence_threshold
+            fallback = is_uncertain
+
             all_scores = {config.ID2LABEL[j]: float(round(float(p), 4)) for j, p in enumerate(probs)}
             results.append(
                 ClassifyResponse(
                     intent=predicted_intent,
                     confidence=confidence,
+                    is_uncertain=is_uncertain,
+                    fallback=fallback,
+                    secondary_intent=secondary_intent,
+                    secondary_confidence=secondary_confidence,
                     cleaned_text=cleaned_texts[i],
                     all_scores=all_scores,
                 )

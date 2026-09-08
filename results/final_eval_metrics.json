@@ -1,98 +1,199 @@
 {
   "model_type": "lora_finetuned_distilbert",
-  "eval_dataset_size": 216,
-  "accuracy": 1.0,
-  "macro_f1": 1.0,
-  "macro_precision": 1.0,
-  "macro_recall": 1.0,
-  "weighted_f1": 1.0,
-  "per_class": {
-    "complaint": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
+  "in_domain_test": {
+    "dataset_name": "In-Domain Test Set (test.csv)",
+    "dataset_size": 126,
+    "accuracy": 0.8889,
+    "macro_f1": 0.8886,
+    "macro_precision": 0.9,
+    "macro_recall": 0.8889,
+    "weighted_f1": 0.8886,
+    "per_class": {
+      "complaint": {
+        "precision": 0.8333,
+        "recall": 0.9524,
+        "f1_score": 0.8889,
+        "support": 21
+      },
+      "purchase_inquiry": {
+        "precision": 0.9474,
+        "recall": 0.8571,
+        "f1_score": 0.9,
+        "support": 21
+      },
+      "price_negotiation": {
+        "precision": 1.0,
+        "recall": 0.8095,
+        "f1_score": 0.8947,
+        "support": 21
+      },
+      "callback_request": {
+        "precision": 0.7778,
+        "recall": 1.0,
+        "f1_score": 0.875,
+        "support": 21
+      },
+      "not_interested": {
+        "precision": 0.8889,
+        "recall": 0.7619,
+        "f1_score": 0.8205,
+        "support": 21
+      },
+      "positive_confirmation": {
+        "precision": 0.9524,
+        "recall": 0.9524,
+        "f1_score": 0.9524,
+        "support": 21
+      }
     },
-    "purchase_inquiry": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
-    },
-    "price_negotiation": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
-    },
-    "callback_request": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
-    },
-    "not_interested": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
-    },
-    "positive_confirmation": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1_score": 1.0,
-      "support": 36
+    "classification_report": {
+      "complaint": {
+        "precision": 0.8333333333333334,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.8888888888888888,
+        "support": 21.0
+      },
+      "purchase_inquiry": {
+        "precision": 0.9473684210526315,
+        "recall": 0.8571428571428571,
+        "f1-score": 0.9,
+        "support": 21.0
+      },
+      "price_negotiation": {
+        "precision": 1.0,
+        "recall": 0.8095238095238095,
+        "f1-score": 0.8947368421052632,
+        "support": 21.0
+      },
+      "callback_request": {
+        "precision": 0.7777777777777778,
+        "recall": 1.0,
+        "f1-score": 0.875,
+        "support": 21.0
+      },
+      "not_interested": {
+        "precision": 0.8888888888888888,
+        "recall": 0.7619047619047619,
+        "f1-score": 0.8205128205128205,
+        "support": 21.0
+      },
+      "positive_confirmation": {
+        "precision": 0.9523809523809523,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.9523809523809523,
+        "support": 21.0
+      },
+      "accuracy": 0.8888888888888888,
+      "macro avg": {
+        "precision": 0.8999582289055974,
+        "recall": 0.8888888888888888,
+        "f1-score": 0.8885865839813208,
+        "support": 126.0
+      },
+      "weighted avg": {
+        "precision": 0.8999582289055973,
+        "recall": 0.8888888888888888,
+        "f1-score": 0.8885865839813207,
+        "support": 126.0
+      }
     }
   },
-  "classification_report": {
-    "complaint": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
+  "ood_benchmark": {
+    "dataset_name": "Out-of-Distribution Benchmark (test_ood.csv)",
+    "dataset_size": 120,
+    "accuracy": 0.7833,
+    "macro_f1": 0.7831,
+    "macro_precision": 0.7984,
+    "macro_recall": 0.7833,
+    "weighted_f1": 0.7831,
+    "per_class": {
+      "complaint": {
+        "precision": 0.56,
+        "recall": 0.7,
+        "f1_score": 0.6222,
+        "support": 20
+      },
+      "purchase_inquiry": {
+        "precision": 0.9444,
+        "recall": 0.85,
+        "f1_score": 0.8947,
+        "support": 20
+      },
+      "price_negotiation": {
+        "precision": 0.7826,
+        "recall": 0.9,
+        "f1_score": 0.8372,
+        "support": 20
+      },
+      "callback_request": {
+        "precision": 0.8571,
+        "recall": 0.9,
+        "f1_score": 0.878,
+        "support": 20
+      },
+      "not_interested": {
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1_score": 0.8,
+        "support": 20
+      },
+      "positive_confirmation": {
+        "precision": 0.8462,
+        "recall": 0.55,
+        "f1_score": 0.6667,
+        "support": 20
+      }
     },
-    "purchase_inquiry": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
-    },
-    "price_negotiation": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
-    },
-    "callback_request": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
-    },
-    "not_interested": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
-    },
-    "positive_confirmation": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 36.0
-    },
-    "accuracy": 1.0,
-    "macro avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 216.0
-    },
-    "weighted avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 216.0
+    "classification_report": {
+      "complaint": {
+        "precision": 0.56,
+        "recall": 0.7,
+        "f1-score": 0.6222222222222222,
+        "support": 20.0
+      },
+      "purchase_inquiry": {
+        "precision": 0.9444444444444444,
+        "recall": 0.85,
+        "f1-score": 0.8947368421052632,
+        "support": 20.0
+      },
+      "price_negotiation": {
+        "precision": 0.782608695652174,
+        "recall": 0.9,
+        "f1-score": 0.8372093023255814,
+        "support": 20.0
+      },
+      "callback_request": {
+        "precision": 0.8571428571428571,
+        "recall": 0.9,
+        "f1-score": 0.8780487804878049,
+        "support": 20.0
+      },
+      "not_interested": {
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1-score": 0.8,
+        "support": 20.0
+      },
+      "positive_confirmation": {
+        "precision": 0.8461538461538461,
+        "recall": 0.55,
+        "f1-score": 0.6666666666666666,
+        "support": 20.0
+      },
+      "accuracy": 0.7833333333333333,
+      "macro avg": {
+        "precision": 0.7983916405655536,
+        "recall": 0.7833333333333332,
+        "f1-score": 0.7831473023012565,
+        "support": 120.0
+      },
+      "weighted avg": {
+        "precision": 0.7983916405655536,
+        "recall": 0.7833333333333333,
+        "f1-score": 0.7831473023012564,
+        "support": 120.0
+      }
     }
   }
 }

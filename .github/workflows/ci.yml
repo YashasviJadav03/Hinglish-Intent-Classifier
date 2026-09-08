@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Lint & Unit Tests
+    name: Lint, Zero-Leakage & Integration Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,35 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
 
-      - name: Run Unit & Integration Tests
+      - name: Run Pytest Suite
         run: |
           pytest -v tests/
+
+      - name: Verify Zero Data Leakage in Dataset Splits
+        run: |
+          python -c "
+          import pandas as pd
+          from src.data.preprocess import verify_split_leakage
+          import config
+          train_df = pd.read_csv(config.TRAIN_DATA_PATH)
+          val_df = pd.read_csv(config.VAL_DATA_PATH)
+          test_df = pd.read_csv(config.TEST_DATA_PATH)
+          ood_df = pd.read_csv(config.TEST_OOD_DATA_PATH)
+          verify_split_leakage(train_df, val_df, test_df, ood_df=ood_df)
+          print('CI Quality Gate PASSED: Verified 0% train/val/test/OOD leakage.')
+          "
+
+      - name: Evaluation Metrics Sanity Gate
+        run: |
+          python -c "
+          import json
+          import config
+          with open(config.FINAL_EVAL_METRICS_PATH) as f:
+              data = json.load(f)
+          in_domain_f1 = data['in_domain_test']['macro_f1']
+          in_domain_acc = data['in_domain_test']['accuracy']
+          print(f'Checking Metrics Sanity: Accuracy={in_domain_acc:.4f}, Macro-F1={in_domain_f1:.4f}')
+          assert in_domain_acc < 0.999, 'FAIL: Suspicious 100% accuracy indicates data leakage regression!'
+          assert in_domain_f1 >= 0.75, 'FAIL: Model macro F1 is below minimum acceptable production baseline (0.75)!'
+          print('CI Metric Sanity Gate PASSED: Realistic, non-leaking evaluation verified.')
+          "

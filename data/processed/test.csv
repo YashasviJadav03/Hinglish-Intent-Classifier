@@ -1,28 +1,127 @@
 base_id,text,intent,clean_text,emojis,excess_punct_count,label
-complaint_010,Mera subscription bina permission ke auto-renew kaise ho gaya?,complaint,Mera subscription bina permission ke auto-renew kaise ho gaya?,,0,0
-complaint_012,"Delivery boy ne package door pe fek ke chala gaya, box damaged hai.",complaint,"Delivery boy ne package door pe fek ke chala gaya, box damaged hai.",,0,0
-complaint_028,"Food quantity bohot kam thi price ke hisab se, fraud hai ye.",complaint,"Food quantity bohot kam thi price ke hisab se, fraud hai ye.",,0,0
-complaint_029,Mechanic ne repair theek se nahi kiya aur machine fir se band ho gayi.,complaint,Mechanic ne repair theek se nahi kiya aur machine fir se band ho gayi.,,0,0
-purchase_inquiry_004,Warranty period kitne saal ka hai is electrical appliance ka?,purchase_inquiry,Warranty period kitne saal ka hai is electrical appliance ka?,,0,1
-purchase_inquiry_007,Kya is plan me international roaming included hai?,purchase_inquiry,Kya is plan me international roaming included hai?,,0,1
+complaint_001,"Mera order abhi tak deliver nahi hua hai, it's been 5 days!",complaint,"Mera order abhi tak deliver nahi hua hai, it's been 5 days!",,0,0
+complaint_013,"Food totally cold and stale tha, hygiene bilkul zero hai.",complaint,"Food totally cold and stale tha, hygiene bilkul zero hai.",,0,0
+complaint_032,"Aapke representative ne jhooth bola feature ke baare me, dhokha diya.",complaint,"Aapke representative ne jhooth bola feature ke baare me, dhokha diya.",,0,0
+complaint_036,Flight delay ho gayi 6 ghante aur koi refreshment provide nahi kiya.,complaint,Flight delay ho gayi 6 ghante aur koi refreshment provide nahi kiya.,,0,0
+complaint_042,Mera KYC reject kar diya bina proper reason bataye.,complaint,Mera KYC reject kar diya bina proper reason bataye.,,0,0
+complaint_045,"Aap log warranty terms follow nahi kar rahe, consumer court me jaunga.",complaint,"Aap log warranty terms follow nahi kar rahe, consumer court me jaunga.",,0,0
+complaint_062,Aapke agent ne mera call cut kar diya beech discussion me.,complaint,Aapke agent ne mera call cut kar diya beech discussion me.,,0,0
+complaint_063,Electricity bill me wrong meter reading calculate hui hai.,complaint,Electricity bill me wrong meter reading calculate hui hai.,,0,0
+complaint_084,Prescription scanner app upload fail kar deta hai bar bar.,complaint,Prescription scanner app upload fail kar deta hai bar bar.,,0,0
+complaint_086,Mobile speaker crackle kar raha hai voice clarity bilkul zero hai.,complaint,Mobile speaker crackle kar raha hai voice clarity bilkul zero hai.,,0,0
+complaint_094,Car rental pickup point pe vehicle available nahi tha booking ke baad bhi.,complaint,Car rental pickup point pe vehicle available nahi tha booking ke baad bhi.,,0,0
+complaint_101,Gold membership li thi but priority support access nahi mil raha.,complaint,Gold membership li thi but priority support access nahi mil raha.,,0,0
+complaint_103,Insurance claim surveyor ne wrong report submit ki claim reject karne ke liye.,complaint,Insurance claim surveyor ne wrong report submit ki claim reject karne ke liye.,,0,0
+complaint_104,Parcel box wet condition me deliver hua andar ka item destroy ho gaya.,complaint,Parcel box wet condition me deliver hua andar ka item destroy ho gaya.,,0,0
+complaint_107,Food container spill ho chuka tha bag ke andar sab kharab ho gaya.,complaint,Food container spill ho chuka tha bag ke andar sab kharab ho gaya.,,0,0
+complaint_109,Smart lock battery drain issue hai 2 din me band ho jata hai.,complaint,Smart lock battery drain issue hai 2 din me band ho jata hai.,,0,0
+complaint_111,Baby stroller ka wheel lock kaam nahi kar raha dangerous defect hai.,complaint,Baby stroller ka wheel lock kaam nahi kar raha dangerous defect hai.,,0,0
+complaint_124,Passport verification officer ne document hold pe daal diya bina wajah.,complaint,Passport verification officer ne document hold pe daal diya bina wajah.,,0,0
+complaint_125,Security camera night vision bilkul black screen deta hai.,complaint,Security camera night vision bilkul black screen deta hai.,,0,0
+complaint_133,Aapke technical executive ne appointment miss kiya bina inform kiye.,complaint,Aapke technical executive ne appointment miss kiya bina inform kiye.,,0,0
+complaint_137,Courier partner ne fake signature karke delivery complete show kar di.,complaint,Courier partner ne fake signature karke delivery complete show kar di.,,0,0
+purchase_inquiry_005,"Mujhe naya laptop lena hai coding ke liye, best option suggest karo.",purchase_inquiry,"Mujhe naya laptop lena hai coding ke liye, best option suggest karo.",,0,1
+purchase_inquiry_006,Is real estate property ka floor plan aur brochures WhatsApp pe bhej do.,purchase_inquiry,Is real estate property ka floor plan aur brochures WhatsApp pe bhej do.,,0,1
+purchase_inquiry_025,Kya aap test drive arrange karwa sakte ho weekend par?,purchase_inquiry,Kya aap test drive arrange karwa sakte ho weekend par?,,0,1
 purchase_inquiry_026,Customization options available hain kya furniture design me?,purchase_inquiry,Customization options available hain kya furniture design me?,,0,1
+purchase_inquiry_027,Is watch me heart rate aur SpO2 tracking sensor accurate hai?,purchase_inquiry,Is watch me heart rate aur SpO2 tracking sensor accurate hai?,,0,1
 purchase_inquiry_028,Consultation fee kitni lagegi specialist doctor se milne ki?,purchase_inquiry,Consultation fee kitni lagegi specialist doctor se milne ki?,,0,1
-price_negotiation_001,"Thoda discount de do na, price thoda zyada lag raha hai.",price_negotiation,"Thoda discount de do na, price thoda zyada lag raha hai.",,0,2
-price_negotiation_008,Price negotiation ke liye manager se baat karwa sakte ho kya?,price_negotiation,Price negotiation ke liye manager se baat karwa sakte ho kya?,,0,2
-price_negotiation_009,"Bhai thoda reasonable lagao, itna high price afford nahi ho payega.",price_negotiation,"Bhai thoda reasonable lagao, itna high price afford nahi ho payega.",,0,2
-price_negotiation_026,"Delivery charges bohot high hain, discount de do shipping par.",price_negotiation,"Delivery charges bohot high hain, discount de do shipping par.",,0,2
-price_negotiation_030,Best bargain price do jisme dono side agree ho sake.,price_negotiation,Best bargain price do jisme dono side agree ho sake.,,0,2
-callback_request_008,"Family dinner pe hu, kal morning me reach out karna.",callback_request,"Family dinner pe hu, kal morning me reach out karna.",,0,3
-callback_request_011,"Abhi class chal rahi hai student ki, dopehar 3 baje phone lagana.",callback_request,"Abhi class chal rahi hai student ki, dopehar 3 baje phone lagana.",,0,3
-callback_request_020,"Doctor appointment me wait kar raha hu, 1 hour baad call karo.",callback_request,"Doctor appointment me wait kar raha hu, 1 hour baad call karo.",,0,3
+purchase_inquiry_035,Kya no-cost EMI 12 months duration ke liye available hai?,purchase_inquiry,Kya no-cost EMI 12 months duration ke liye available hai?,,0,1
+purchase_inquiry_041,Kya ye shoes waterproof material ke bane hain monsoon ke liye?,purchase_inquiry,Kya ye shoes waterproof material ke bane hain monsoon ke liye?,,0,1
+purchase_inquiry_046,Solar panel installation ke liye government subsidy eligible hai kya?,purchase_inquiry,Solar panel installation ke liye government subsidy eligible hai kya?,,0,1
+purchase_inquiry_047,Is water purifier me RO ke sath UV aur copper filter bhi hai?,purchase_inquiry,Is water purifier me RO ke sath UV aur copper filter bhi hai?,,0,1
+purchase_inquiry_049,Is blender me dry masala grinding jar sath me milta hai?,purchase_inquiry,Is blender me dry masala grinding jar sath me milta hai?,,0,1
+purchase_inquiry_059,Is drone me obstacle avoidance sensors present hain kya charo side?,purchase_inquiry,Is drone me obstacle avoidance sensors present hain kya charo side?,,0,1
+purchase_inquiry_065,Is soundbar me Dolby Atmos decoding support hai HDMI eARC ke sath?,purchase_inquiry,Is soundbar me Dolby Atmos decoding support hai HDMI eARC ke sath?,,0,1
+purchase_inquiry_069,Is winter jacket ka material pure feather down hai kya?,purchase_inquiry,Is winter jacket ka material pure feather down hai kya?,,0,1
+purchase_inquiry_077,Is electric bicycle me pedal assist mode hai kya battery off hone par?,purchase_inquiry,Is electric bicycle me pedal assist mode hai kya battery off hone par?,,0,1
+purchase_inquiry_086,Kya salon bridal package me pre-bridal skin care sessions included hain?,purchase_inquiry,Kya salon bridal package me pre-bridal skin care sessions included hain?,,0,1
+purchase_inquiry_089,Is organic food subscription me weekly customization allow hoti hai?,purchase_inquiry,Is organic food subscription me weekly customization allow hoti hai?,,0,1
+purchase_inquiry_096,Kya music classes me personal 1-on-1 teacher guidance milti hai?,purchase_inquiry,Kya music classes me personal 1-on-1 teacher guidance milti hai?,,0,1
+purchase_inquiry_102,Kya kids bicycle me training support wheels attach aate hain?,purchase_inquiry,Kya kids bicycle me training support wheels attach aate hain?,,0,1
+purchase_inquiry_115,Is wireless router me WiFi 6 support aur mesh technology hai?,purchase_inquiry,Is wireless router me WiFi 6 support aur mesh technology hai?,,0,1
+purchase_inquiry_124,Kya event management team stage decor aur sound lighting arrange karegi?,purchase_inquiry,Kya event management team stage decor aur sound lighting arrange karegi?,,0,1
+price_negotiation_012,Shipping fee free kar do to order place karta hu turant.,price_negotiation,Shipping fee free kar do to order place karta hu turant.,,0,2
+price_negotiation_013,First time customer ke liye koi introductory discount voucher hai?,price_negotiation,First time customer ke liye koi introductory discount voucher hai?,,0,2
+price_negotiation_019,Kuch combo deal bana do jisme overall cost thoda reduce ho jaye.,price_negotiation,Kuch combo deal bana do jisme overall cost thoda reduce ho jaye.,,0,2
+price_negotiation_023,"Bohot expensive lag raha hai product, koi lower variant saste me hai?",price_negotiation,"Bohot expensive lag raha hai product, koi lower variant saste me hai?",,0,2
+price_negotiation_037,Service charge mat lagao baki product ka pura price pay kar dunga.,price_negotiation,Service charge mat lagao baki product ka pura price pay kar dunga.,,0,2
+price_negotiation_049,Sir student hu thoda pocket friendly price laga do na.,price_negotiation,Sir student hu thoda pocket friendly price laga do na.,,0,2
+price_negotiation_053,"Bhai itna rigid mat raho pricing me, customer relationship maintain karo.",price_negotiation,"Bhai itna rigid mat raho pricing me, customer relationship maintain karo.",,0,2
+price_negotiation_061,Thoda cut karo quotation me management approval ke liye bhejna hai.,price_negotiation,Thoda cut karo quotation me management approval ke liye bhejna hai.,,0,2
+price_negotiation_062,Demo and installation cost free of charge include kar do price me.,price_negotiation,Demo and installation cost free of charge include kar do price me.,,0,2
+price_negotiation_069,"Bhai bulk quantity order hai 50 units ka, wholesale discount calculate karo.",price_negotiation,"Bhai bulk quantity order hai 50 units ka, wholesale discount calculate karo.",,0,2
+price_negotiation_084,Sir 500 discount de do to delivery address share karu.,price_negotiation,Sir 500 discount de do to delivery address share karu.,,0,2
+price_negotiation_086,Agar bank discount nahi lag raha to aap company side se compensate karo.,price_negotiation,Agar bank discount nahi lag raha to aap company side se compensate karo.,,0,2
+price_negotiation_096,Aapke competitors festival discount offer kar rahe hain aapka offer kya hai?,price_negotiation,Aapke competitors festival discount offer kar rahe hain aapka offer kya hai?,,0,2
+price_negotiation_100,"Hamari team size 20 members ki hai, group license discount quote karo.",price_negotiation,"Hamari team size 20 members ki hai, group license discount quote karo.",,0,2
+price_negotiation_105,"Itne me to market me branded model mil jata hai, rate revise karo.",price_negotiation,"Itne me to market me branded model mil jata hai, rate revise karo.",,0,2
+price_negotiation_109,Sir please discount code email kar dijiye so that payment link open karu.,price_negotiation,Sir please discount code email kar dijiye so that payment link open karu.,,0,2
+price_negotiation_112,Hamare purchase order me thoda price relief facilitate karo.,price_negotiation,Hamare purchase order me thoda price relief facilitate karo.,,0,2
+price_negotiation_119,Bhai price negotiation me itna strict mat bano flexible raho thoda.,price_negotiation,Bhai price negotiation me itna strict mat bano flexible raho thoda.,,0,2
+price_negotiation_120,Final payable total thoda kam karke revised quotation send karo.,price_negotiation,Final payable total thoda kam karke revised quotation send karo.,,0,2
+price_negotiation_133,Bhai discount mil jaye to main 2 units aur book kar lunga.,price_negotiation,Bhai discount mil jaye to main 2 units aur book kar lunga.,,0,2
+price_negotiation_136,Bhai delivery charges hata lo bargain khatam karte hain.,price_negotiation,Bhai delivery charges hata lo bargain khatam karte hain.,,0,2
+callback_request_002,"Meeting me busy hu abhi, kal subah 10 baje call karna.",callback_request,"Meeting me busy hu abhi, kal subah 10 baje call karna.",,0,3
+callback_request_003,"Aapki voice clearly nahi aa rahi, 15 minute baad fir se phone karo.",callback_request,"Aapki voice clearly nahi aa rahi, 15 minute baad fir se phone karo.",,0,3
+callback_request_021,"Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna.",callback_request,"Abhi commute kar raha hu metro me, reaching home by 7 PM tab call karna.",,0,3
 callback_request_030,Can we schedule this discussion for tomorrow morning at 10:30 AM?,callback_request,Can we schedule this discussion for tomorrow morning at 10:30 AM?,,0,3
+callback_request_038,"Conference call chal rahi hai dusre line pe, thodi der me phone lagao.",callback_request,"Conference call chal rahi hai dusre line pe, thodi der me phone lagao.",,0,3
+callback_request_042,"Main funeral me hu abhi baat nahi kar sakta, kal subah call karna.",callback_request,"Main funeral me hu abhi baat nahi kar sakta, kal subah call karna.",,0,3
+callback_request_049,Aapke representative ko bolo mujhe Saturday subah call kare.,callback_request,Aapke representative ko bolo mujhe Saturday subah call kare.,,0,3
+callback_request_059,"Car servicing center me hu discussion chal rahi hai, 20 min baad phone lagana.",callback_request,"Car servicing center me hu discussion chal rahi hai, 20 min baad phone lagana.",,0,3
+callback_request_064,"Dentist chair pe hu speaking impossible hai, 1 hr baad ring karo.",callback_request,"Dentist chair pe hu speaking impossible hai, 1 hr baad ring karo.",,0,3
+callback_request_075,"Teacher parents meeting me hu school me, kal connect karna.",callback_request,"Teacher parents meeting me hu school me, kal connect karna.",,0,3
+callback_request_089,"Heavy headache hai abhi rest kar raha hu, kal reach out karna.",callback_request,"Heavy headache hai abhi rest kar raha hu, kal reach out karna.",,0,3
+callback_request_091,"Main workshop me machinery operate kar raha hu safety rule hai, lunch me 1 PM call karna.",callback_request,"Main workshop me machinery operate kar raha hu safety rule hai, lunch me 1 PM call karna.",,0,3
+callback_request_092,Aap kal sham 6 baje se pehle connect mat karna office hours me busy hu.,callback_request,Aap kal sham 6 baje se pehle connect mat karna office hours me busy hu.,,0,3
+callback_request_100,"Aapka voice lag ho raha hai delay aa raha hai, call cut karke fir milao.",callback_request,"Aapka voice lag ho raha hai delay aa raha hai, call cut karke fir milao.",,0,3
+callback_request_104,Aap evening slot me 7:00 PM pe callback lock kijiye please.,callback_request,Aap evening slot me 7:00 PM pe callback lock kijiye please.,,0,3
+callback_request_107,"Main meeting room me enter kar raha hu, 1 ghante baad phone lagana.",callback_request,"Main meeting room me enter kar raha hu, 1 ghante baad phone lagana.",,0,3
+callback_request_116,Please arrange a detailed callback with your expert tomorrow 11 AM.,callback_request,Please arrange a detailed callback with your expert tomorrow 11 AM.,,0,3
+callback_request_117,"Main driving kar raha hu headset connect nahi hai, 30 min baad call karna.",callback_request,"Main driving kar raha hu headset connect nahi hai, 30 min baad call karna.",,0,3
+callback_request_121,"Main patient care me hu hospital room me, call tomorrow morning.",callback_request,"Main patient care me hu hospital room me, call tomorrow morning.",,0,3
+callback_request_122,Aapka representative lunch ke baad 2 PM connect kare to acha hoga.,callback_request,Aapka representative lunch ke baad 2 PM connect kare to acha hoga.,,0,3
+callback_request_131,"Main battery change kar raha hu phone switch off hoga, call after 10 mins.",callback_request,"Main battery change kar raha hu phone switch off hoga, call after 10 mins.",,0,3
 not_interested_007,Spam call karna band karo otherwise main consumer forum me report karunga.,not_interested,Spam call karna band karo otherwise main consumer forum me report karunga.,,0,4
 not_interested_008,Nahi chahiye bhai mat call karo.,not_interested,Nahi chahiye bhai mat call karo.,,0,4
-not_interested_012,Do not disturb list me daal do mera contact.,not_interested,Do not disturb list me daal do mera contact.,,0,4
 not_interested_014,"No thanks, I am not looking for any insurance policy.",not_interested,"No thanks, I am not looking for any insurance policy.",,0,4
-not_interested_018,Kindly delete my data from your telemarketing system.,not_interested,Kindly delete my data from your telemarketing system.,,0,4
-positive_confirmation_009,"Yes proceed with the subscription plan, credit card details shared.",positive_confirmation,"Yes proceed with the subscription plan, credit card details shared.",,0,5
-positive_confirmation_013,"Theek hai mujhe ye deal pasand aayi, lock kar dijiye.",positive_confirmation,"Theek hai mujhe ye deal pasand aayi, lock kar dijiye.",,0,5
-positive_confirmation_021,"Haan plan finalize ho gaya hai, invoice raise kar do.",positive_confirmation,"Haan plan finalize ho gaya hai, invoice raise kar do.",,0,5
-positive_confirmation_024,"Yes everything looks good to me, proceed immediately.",positive_confirmation,"Yes everything looks good to me, proceed immediately.",,0,5
-positive_confirmation_028,"Yes that works for me, lock this pricing.",positive_confirmation,"Yes that works for me, lock this pricing.",,0,5
+not_interested_021,"Daily 10 call aate hain aapke, block list me daal raha hu number.",not_interested,"Daily 10 call aate hain aapke, block list me daal raha hu number.",,0,4
+not_interested_035,"I am not interested in your offers, please do not dial my number again.",not_interested,"I am not interested in your offers, please do not dial my number again.",,0,4
+not_interested_048,"Maine mana kiya tha subah bhi, fir phone ghuma diya aapne.",not_interested,"Maine mana kiya tha subah bhi, fir phone ghuma diya aapne.",,0,4
+not_interested_061,"No interest in upgrading my internet plan, speed is sufficient.",not_interested,"No interest in upgrading my internet plan, speed is sufficient.",,0,4
+not_interested_068,Mujhe kisi software tool ka demo nahi dekhna.,not_interested,Mujhe kisi software tool ka demo nahi dekhna.,,0,4
+not_interested_075,I do not need any credit limit enhancement on my card.,not_interested,I do not need any credit limit enhancement on my card.,,0,4
+not_interested_082,"Mujhe koi personal loan ki zarurat nahi hai, stop chasing.",not_interested,"Mujhe koi personal loan ki zarurat nahi hai, stop chasing.",,0,4
+not_interested_084,Not interested in any subscriptions right now.,not_interested,Not interested in any subscriptions right now.,,0,4
+not_interested_089,Nahi bhai mujhe koi discount offer nahi chahiye phone cut karo.,not_interested,Nahi bhai mujhe koi discount offer nahi chahiye phone cut karo.,,0,4
+not_interested_093,"Aapke calls disturbing hain, block kar raha hu.",not_interested,"Aapke calls disturbing hain, block kar raha hu.",,0,4
+not_interested_099,Mujhe car servicing AMC nahi leni local mechanic se karwata hu.,not_interested,Mujhe car servicing AMC nahi leni local mechanic se karwata hu.,,0,4
+not_interested_104,"Nahi chahiye aapka broadband connection, wireless wifi theek hai mera.",not_interested,"Nahi chahiye aapka broadband connection, wireless wifi theek hai mera.",,0,4
+not_interested_111,Please remove my phone number from all marketing databases.,not_interested,Please remove my phone number from all marketing databases.,,0,4
+not_interested_113,I am not looking for any business consulting packages.,not_interested,I am not looking for any business consulting packages.,,0,4
+not_interested_131,I don't need any diet or weight loss subscriptions.,not_interested,I don't need any diet or weight loss subscriptions.,,0,4
+not_interested_132,"Bhai phone mat karo aage se, not interested at all.",not_interested,"Bhai phone mat karo aage se, not interested at all.",,0,4
+not_interested_136,I have zero interest in your product offerings.,not_interested,I have zero interest in your product offerings.,,0,4
+not_interested_139,Not interested in any telephonic sales pitches.,not_interested,Not interested in any telephonic sales pitches.,,0,4
+positive_confirmation_001,"Haan bilkul theek hai, aap booking proceed kar dijiye.",positive_confirmation,"Haan bilkul theek hai, aap booking proceed kar dijiye.",,0,5
+positive_confirmation_005,"Haan delivery address correct hai, dispatch karwa do order.",positive_confirmation,"Haan delivery address correct hai, dispatch karwa do order.",,0,5
+positive_confirmation_012,"Yes confirmed, main demo session attend karne ke liye ready hu.",positive_confirmation,"Yes confirmed, main demo session attend karne ke liye ready hu.",,0,5
+positive_confirmation_023,"Agreed, main onboarding session join karne ke liye ready hu.",positive_confirmation,"Agreed, main onboarding session join karne ke liye ready hu.",,0,5
+positive_confirmation_030,"Approved from my side, initiate the service today itself.",positive_confirmation,"Approved from my side, initiate the service today itself.",,0,5
+positive_confirmation_034,Theek hai agreement paper sign karke courier kar raha hu.,positive_confirmation,Theek hai agreement paper sign karke courier kar raha hu.,,0,5
+positive_confirmation_047,Haan package pack karke aaj hi courier partner ko handover kar do.,positive_confirmation,Haan package pack karke aaj hi courier partner ko handover kar do.,,0,5
+positive_confirmation_048,"Yes confirmed from my end, deduct the monthly EMI.",positive_confirmation,"Yes confirmed from my end, deduct the monthly EMI.",,0,5
+positive_confirmation_052,"Yes I accept the quotation, please start processing.",positive_confirmation,"Yes I accept the quotation, please start processing.",,0,5
+positive_confirmation_058,Sure activate the premium features on my registered account.,positive_confirmation,Sure activate the premium features on my registered account.,,0,5
+positive_confirmation_060,Haan main interested hu aur enroll karne ke liye ready hu.,positive_confirmation,Haan main interested hu aur enroll karne ke liye ready hu.,,0,5
+positive_confirmation_062,"Theek hai deal finalized, email confirmation bhej dijiye.",positive_confirmation,"Theek hai deal finalized, email confirmation bhej dijiye.",,0,5
+positive_confirmation_063,Haan main renew karne ke liye agree karta hu same plan.,positive_confirmation,Haan main renew karne ke liye agree karta hu same plan.,,0,5
+positive_confirmation_090,"Theek hai plan finalize karte hain, sign up form send karo.",positive_confirmation,"Theek hai plan finalize karte hain, sign up form send karo.",,0,5
+positive_confirmation_092,Sure go ahead with the order processing immediately.,positive_confirmation,Sure go ahead with the order processing immediately.,,0,5
+positive_confirmation_094,"Yes that works perfectly for me, consider it confirmed.",positive_confirmation,"Yes that works perfectly for me, consider it confirmed.",,0,5
+positive_confirmation_099,"Bilkul ready hu to switch to your broadband connection, install it.",positive_confirmation,"Bilkul ready hu to switch to your broadband connection, install it.",,0,5
+positive_confirmation_103,"Yes I am ready to buy, send the payment link on SMS.",positive_confirmation,"Yes I am ready to buy, send the payment link on SMS.",,0,5
+positive_confirmation_106,Haan main ready hu consultation call ke liye doctor ko connect karo.,positive_confirmation,Haan main ready hu consultation call ke liye doctor ko connect karo.,,0,5
+positive_confirmation_116,"Haan main interested hu, orientation session kab hai bataye.",positive_confirmation,"Haan main interested hu, orientation session kab hai bataye.",,0,5
+positive_confirmation_122,"Sure proceed ahead with flight booking, details checked.",positive_confirmation,"Sure proceed ahead with flight booking, details checked.",,0,5
