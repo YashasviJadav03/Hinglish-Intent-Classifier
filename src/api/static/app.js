@@ -1,6 +1,6 @@
 /**
  * Hinglish Intent Classifier Web Application
- * Frontend JavaScript Logic
+ * Frontend JavaScript Logic with Confidence Fallback and Secondary Intent Support
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,6 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const confidencePct = document.getElementById("confidence-pct");
   const distBarsContainer = document.getElementById("dist-bars-container");
   const diffCleaned = document.getElementById("diff-cleaned");
+  const thresholdSlider = document.getElementById("threshold-slider");
+  const thresholdVal = document.getElementById("threshold-val");
+  const fallbackBanner = document.getElementById("fallback-banner");
+  const fallbackSecondaryIntent = document.getElementById("fallback-secondary-intent");
+  const secondaryIntentBadge = document.getElementById("secondary-intent-badge");
+  const secondaryIntentName = document.getElementById("secondary-intent-name");
+  const secondaryIntentConf = document.getElementById("secondary-intent-conf");
 
   // Intent Action Protocols mapping for voice agents
   const INTENT_ACTIONS = {
@@ -29,15 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
     not_interested: "🚫 <strong>Voice Agent Trigger:</strong> Tag as cold lead in sales pipeline, log DND preferences, and end call politely.",
     positive_confirmation: "✅ <strong>Voice Agent Trigger:</strong> Trigger instant payment link via SMS/WhatsApp and mark lead as WON in CRM."
   };
-
-  const ALL_INTENTS = [
-    "price_negotiation",
-    "complaint",
-    "purchase_inquiry",
-    "callback_request",
-    "not_interested",
-    "positive_confirmation"
-  ];
 
   // 1. Check API Health on Startup
   async function checkHealth() {
@@ -54,7 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 2. Update Character Counter
+  // 2. Threshold Slider Update
+  if (thresholdSlider && thresholdVal) {
+    thresholdSlider.addEventListener("input", () => {
+      thresholdVal.textContent = `${thresholdSlider.value}%`;
+      runClassification();
+    });
+  }
+
+  // 3. Update Character Counter
   function updateCharCount() {
     const len = utteranceInput.value.length;
     charCounter.textContent = `${len} / 250`;
@@ -63,14 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
   utteranceInput.addEventListener("input", updateCharCount);
   updateCharCount();
 
-  // 3. Clear Input
+  // 4. Clear Input
   clearInputBtn.addEventListener("click", () => {
     utteranceInput.value = "";
     updateCharCount();
     utteranceInput.focus();
   });
 
-  // 4. Sample Pill Click Handling
+  // 5. Sample Pill Click Handling
   samplePillsContainer.addEventListener("click", (e) => {
     const btn = e.target.closest(".pill-btn");
     if (!btn) return;
@@ -87,13 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
     runClassification();
   });
 
-  // 5. Main Classification Handler
+  // 6. Main Classification Handler
   async function runClassification() {
     const text = utteranceInput.value.trim();
     if (!text) {
       alert("Please enter a customer utterance to classify.");
       return;
     }
+
+    const thresholdDecimal = thresholdSlider ? parseFloat(thresholdSlider.value) / 100.0 : 0.60;
 
     // Start loading state & timer
     classifyBtn.classList.add("loading");
@@ -103,7 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/classify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text })
+        body: JSON.stringify({
+          text: text,
+          confidence_threshold: thresholdDecimal
+        })
       });
 
       const elapsedMs = Math.round(performance.now() - startTime);
@@ -117,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
       renderResults(data);
     } catch (error) {
       console.error("Classification error:", error);
-      alert("Failed to reach classification API. Please check your network or server status.");
     } finally {
       classifyBtn.classList.remove("loading");
     }
@@ -133,9 +143,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 6. Render Results to UI
+  // 7. Render Results to UI
   function renderResults(data) {
-    const { intent, confidence, cleaned_text, all_scores } = data;
+    const {
+      intent,
+      confidence,
+      is_uncertain,
+      fallback,
+      secondary_intent,
+      secondary_confidence,
+      cleaned_text,
+      all_scores
+    } = data;
 
     // Top Intent Name
     topIntentName.textContent = intent.replace(/_/g, " ");
@@ -147,6 +166,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const confPercent = Math.round(confidence * 100);
     confidencePct.textContent = `${confPercent}%`;
     circleBar.setAttribute("stroke-dasharray", `${confPercent}, 100`);
+
+    // Uncertainty Fallback Banner
+    if (fallback && fallbackBanner) {
+      fallbackBanner.style.display = "flex";
+      if (fallbackSecondaryIntent && secondary_intent) {
+        fallbackSecondaryIntent.textContent = `${secondary_intent.replace(/_/g, " ")} (${Math.round((secondary_confidence || 0) * 100)}%)`;
+      }
+    } else if (fallbackBanner) {
+      fallbackBanner.style.display = "none";
+    }
+
+    // Secondary Intent Badge
+    if (secondary_intent && secondaryIntentBadge) {
+      secondaryIntentBadge.style.display = "inline-flex";
+      secondaryIntentName.textContent = secondary_intent.replace(/_/g, " ");
+      secondaryIntentConf.textContent = `${Math.round((secondary_confidence || 0) * 100)}%`;
+    } else if (secondaryIntentBadge) {
+      secondaryIntentBadge.style.display = "none";
+    }
 
     // Cleaned Text Diff
     diffCleaned.textContent = cleaned_text || utteranceInput.value;

@@ -72,7 +72,7 @@ def compare_and_report_runs() -> pd.DataFrame:
     print("=" * 80 + "\n")
 
     # Save summary to markdown
-    md_summary_path = config.RESULTS_DIR / "ablation_summary.md"
+    md_summary_path = config.RESULTS_DIR / "lora_runs_summary.md"
     
     # Generate markdown table string natively
     headers = list(table_df.columns)

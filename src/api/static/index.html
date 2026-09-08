@@ -59,7 +59,7 @@
         Code-Mixed <span class="gradient-text">Hinglish Intent</span> Intelligence
       </h1>
       <p class="hero-subtitle">
-        Fine-tuned multilingual transformer (DistilBERT + LoRA PEFT) built for real-time natural language understanding inside noisy conversational sales voice agents.
+        Fine-tuned multilingual transformer (DistilBERT + LoRA PEFT) built for real-time natural language understanding inside conversational sales voice agents.
       </p>
     </section>
 
@@ -72,7 +72,7 @@
             <span class="step-num">01</span>
             <div>
               <h2 class="card-title">Voice Utterance Input</h2>
-              <p class="card-desc">Type code-mixed Hindi-English or pick a scenario below</p>
+              <p class="card-desc">Type code-mixed Hindi-English or pick a real-world scenario</p>
             </div>
           </div>
           <button class="icon-btn" id="clear-input-btn" title="Clear text">
@@ -101,6 +101,17 @@
           </div>
         </div>
 
+        <!-- Uncertainty Fallback Threshold Setting -->
+        <div class="threshold-container">
+          <div class="threshold-header">
+            <label for="threshold-slider" class="threshold-label">
+              🛡️ Confidence Fallback Threshold: <span id="threshold-val" class="highlight-txt">60%</span>
+            </label>
+            <span class="threshold-sub">Triggers secondary intent routing below this score</span>
+          </div>
+          <input type="range" id="threshold-slider" min="30" max="95" value="60" class="slider-input">
+        </div>
+
         <!-- Quick Sample Pills -->
         <div class="samples-section">
           <div class="samples-header">
@@ -125,6 +136,9 @@
             <button class="pill-btn" data-text="Bhaiya is plan ke features aur warranty explain kardo.">
               🔍 Purchase Inquiry
             </button>
+            <button class="pill-btn" data-text="bhai 6 din se order ruka hua h koi btao kb aayga?">
+              🎙️ ASR Slang / Typo
+            </button>
           </div>
         </div>
 
@@ -145,12 +159,20 @@
             <span class="step-num">02</span>
             <div>
               <h2 class="card-title">NLU Prediction Intelligence</h2>
-              <p class="card-desc">Real-time intent dispatch & softmax distribution</p>
+              <p class="card-desc">Real-time intent dispatch & fallback safeguards</p>
             </div>
           </div>
           <div class="latency-badge" id="latency-badge">
             <span class="latency-dot"></span>
             <span id="latency-text">~14ms</span>
+          </div>
+        </div>
+
+        <!-- Uncertainty Alert Banner (Hidden by default) -->
+        <div class="fallback-banner" id="fallback-banner" style="display: none;">
+          <div class="fallback-icon">⚠️</div>
+          <div class="fallback-text">
+            <strong>Uncertainty Fallback Triggered:</strong> Model confidence is below the safety threshold. Consider clarifying or routing to secondary intent: <span id="fallback-secondary-intent" class="highlight-txt"></span>
           </div>
         </div>
 
@@ -162,6 +184,10 @@
             <p class="intent-action" id="intent-action">
               🎯 <strong>Voice Agent Trigger:</strong> Offer standard tier discount coupon or initiate pricing rebuttal protocol.
             </p>
+            <!-- Secondary Intent Recommendation -->
+            <div class="secondary-intent-badge" id="secondary-intent-badge" style="display: none;">
+              <span>Secondary Alternative:</span> <strong id="secondary-intent-name"></strong> (<span id="secondary-intent-conf"></span>)
+            </div>
           </div>
           <div class="confidence-circle" id="confidence-circle">
             <svg viewBox="0 0 36 36" class="circular-chart">
@@ -199,34 +225,34 @@
 
     <!-- Benchmarks & Architecture Showcase -->
     <section class="benchmarks-section">
-      <h2 class="section-title">Model Performance & Architecture</h2>
+      <h2 class="section-title">Verified Model Benchmarks (Zero-Leakage Pipeline)</h2>
       <div class="benchmark-grid">
         <div class="bench-card">
           <div class="bench-header">
             <span class="bench-label">Zero-Shot Baseline</span>
-            <span class="bench-model">DistilBERT-MNLI</span>
+            <span class="bench-model">Heuristic Keyword NLI</span>
           </div>
-          <div class="bench-value low">38.89%</div>
-          <p class="bench-desc">Zero-shot multi-lingual baseline struggled on code-mixed slang and colloquial Hinglish transliteration.</p>
+          <div class="bench-value low">61.9% F1</div>
+          <p class="bench-desc">Zero-shot multi-lingual baseline struggled on code-mixed slang, implicit negation, and colloquial voice transliteration.</p>
         </div>
 
         <div class="bench-card featured">
-          <div class="featured-tag">Production Best</div>
+          <div class="featured-tag">Production Model</div>
           <div class="bench-header">
-            <span class="bench-label">LoRA Fine-Tuned</span>
-            <span class="bench-model">DistilBERT + PEFT (r=16)</span>
+            <span class="bench-label">Fine-Tuned LoRA</span>
+            <span class="bench-model">DistilBERT + PEFT (r=8)</span>
           </div>
-          <div class="bench-value highlight">100.00%</div>
-          <p class="bench-desc">Achieved perfect test accuracy & Macro-F1 across all 6 customer intents with only 1.18M trainable parameters.</p>
+          <div class="bench-value highlight">88.9% F1</div>
+          <p class="bench-desc">Achieved 88.9% macro F1 across clean test samples and 78.3% on noisy out-of-distribution voice ASR benchmarks.</p>
         </div>
 
         <div class="bench-card">
           <div class="bench-header">
-            <span class="bench-label">Parameter Efficiency</span>
-            <span class="bench-model">PEFT LoRA vs Full Fine-Tuning</span>
+            <span class="bench-label">Classical Baseline</span>
+            <span class="bench-model">TF-IDF + Logistic Regression</span>
           </div>
-          <div class="bench-value">99.1% Saved</div>
-          <p class="bench-desc">Trained only 0.87% of base model weights, resulting in a lightweight 3.5MB adapter suitable for edge voice pipelines.</p>
+          <div class="bench-value">93.7% F1</div>
+          <p class="bench-desc">Strong n-gram baseline executing in sub-2ms, serving as an ultra-fast first-stage retrieval filter.</p>
         </div>
       </div>
     </section>
@@ -235,7 +261,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <p>Built with PyTorch, Hugging Face Transformers & FastAPI • Deployed on Render</p>
+      <p>Built with PyTorch, Hugging Face Transformers & FastAPI • Zero-Leakage Group-Split Architecture</p>
       <div class="footer-links">
         <a href="https://huggingface.co/yashasvijadav03/hinglish-intent-classifier" target="_blank">Hugging Face Model Card</a>
         <span>•</span>
