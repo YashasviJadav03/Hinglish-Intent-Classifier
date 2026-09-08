@@ -121,7 +121,18 @@ curl -X POST "http://localhost:7860/classify" \
 
 ---
 
-## 7. Quickstart
+## 7. Interactive Web Dashboard
+
+The [live web demo](https://hinglish-intent-classifier.onrender.com/) includes:
+
+- **Single Utterance Classifier** — Type or select sample Hinglish utterances, adjust the confidence fallback threshold via slider, and see real-time intent prediction with softmax probability distribution bars and a circular confidence gauge.
+- **Animated Project Stats** — Key metrics (840 base utterances, 5,076 total samples, 6 intent classes, 88.9% F1, 78.3% OOD F1, 35ms latency) animate into view on scroll.
+- **Batch Demo** — Fires 6 diverse utterances (one per intent class) simultaneously via `/classify/batch` and renders results in a staggered animated card grid with fallback detection.
+- **Uncertainty Fallback Safeguards** — When model confidence drops below the configurable threshold, an amber warning banner surfaces the secondary intent recommendation.
+
+---
+
+## 8. Quickstart
 
 ```bash
 # 1. Install dependencies
